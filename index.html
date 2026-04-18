@@ -972,7 +972,12 @@
     <div class="cal-box">
       <div class="cal-bar">
         <h3>📅 Our Shared Calendar</h3>
-        <span class="badge">Family Only</span>
+        <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+          <span class="badge">Family Only</span>
+          <a href="mailto:deguzman-goose@googlegroups.com?subject=📅%20New%20Family%20Event&body=Hi%20everyone%2C%20I%20just%20added%20a%20new%20event%20to%20the%20Family%20Calendar.%20Check%20it%20out!" 
+             style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);border-radius:100px;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.28rem .8rem;text-decoration:none;white-space:nowrap;"
+             target="_blank">✉️ Notify Family</a>
+        </div>
       </div>
       <div class="cal-responsive">
         <iframe src="https://calendar.google.com/calendar/embed?src=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com&ctz=America%2FChicago" frameborder="0" scrolling="no"></iframe>
@@ -1317,22 +1322,28 @@
       <div class="notify-card">
         <span class="notify-icon">📧</span>
         <h3>Family Group Email</h3>
-        <p>One email address that reaches everyone at once. Lands in Gmail inbox — which pops up on iPhone just like a text.</p>
-        <div class="notify-steps">
-          <div class="nstep"><div class="nnum">1</div>Go to <strong>groups.google.com</strong> → <strong>"Create group"</strong> → name it <em>Our Family.</em></div>
-          <div class="nstep"><div class="nnum">2</div>Add everyone's Gmail addresses. They each tap Accept.</div>
-          <div class="nstep"><div class="nnum">3</div>Done! One email reaches everyone instantly.</div>
+        <p>Your family group is all set up! One email to your group address reaches everyone's Gmail inbox instantly — and pops up on iPhone just like a text message.</p>
+        <div style="background:rgba(78,48,32,.06);border-radius:.85rem;padding:1rem 1.1rem;margin-bottom:1rem;">
+          <p style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:.35rem;">Your Family Group Email</p>
+          <p style="font-size:1rem;font-weight:600;color:var(--warm);word-break:break-all;">deguzman-goose@googlegroups.com</p>
         </div>
-        <div style="margin-top:1.1rem;"><a class="btn btn-rust" href="https://groups.google.com/my-groups" target="_blank">Set Up Group →</a></div>
+        <div class="notify-steps">
+          <div class="nstep"><div class="nnum">✓</div>Group is active — all family members are connected.</div>
+          <div class="nstep"><div class="nnum">✓</div>When someone posts on the Noticeboard, tap <strong>"Notify Family"</strong> to send everyone an email alert.</div>
+          <div class="nstep"><div class="nnum">✓</div>Use the button below to send a message to the whole family at any time.</div>
+        </div>
+        <div style="margin-top:1.1rem;">
+          <a class="btn btn-rust" href="mailto:deguzman-goose@googlegroups.com" target="_blank">✉️ Email the Family →</a>
+        </div>
       </div>
       <div class="notify-card">
         <span class="notify-icon">📅</span>
         <h3>Calendar Reminders</h3>
-        <p>Google automatically emails everyone when a new event is added or coming up. Built in — nothing extra needed.</p>
+        <p>Google automatically sends reminders when events are added or coming up. Make sure your group email is added to the calendar so everyone gets notified.</p>
         <div class="notify-steps">
-          <div class="nstep"><div class="nnum">1</div>The Family Calendar above is already active.</div>
-          <div class="nstep"><div class="nnum">2</div>Adjust timing in <strong>Google Calendar → Settings → Notifications.</strong></div>
-          <div class="nstep"><div class="nnum">3</div>Reminders show as iPhone notifications automatically.</div>
+          <div class="nstep"><div class="nnum">1</div>In Google Calendar → your Family Hub calendar → <strong>Settings → Share with specific people</strong> → add <strong>deguzman-goose@googlegroups.com</strong></div>
+          <div class="nstep"><div class="nnum">2</div>Now the whole group gets an email whenever a new event is added.</div>
+          <div class="nstep"><div class="nnum">3</div>Each person can set their own reminder timing in <strong>Google Calendar → Settings → Notifications.</strong></div>
         </div>
         <div style="margin-top:1.1rem;"><a class="btn btn-rust" href="https://calendar.google.com/calendar/r/settings" target="_blank">Calendar Settings →</a></div>
       </div>
@@ -1425,6 +1436,16 @@
       <label class="fl">Caption / Message</label>
       <textarea class="fta" id="pText" placeholder="Share something with the family…"></textarea>
     </div>
+
+    <!-- Notify family toggle -->
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.1rem;padding:.85rem 1rem;background:rgba(78,48,32,.04);border-radius:.75rem;border:1.5px solid rgba(78,48,32,.1);">
+      <input type="checkbox" id="pNotify" checked style="width:18px;height:18px;accent-color:var(--rust);cursor:pointer;flex-shrink:0;" />
+      <label for="pNotify" style="font-size:.83rem;color:var(--warm);cursor:pointer;line-height:1.4;">
+        <strong>Notify the family</strong><br>
+        <span style="font-size:.74rem;color:var(--soft);">Opens an email to deguzman-goose@googlegroups.com</span>
+      </label>
+    </div>
+
     <div class="ma">
       <button class="btn btn-ghost" onclick="closeSheet()">Cancel</button>
       <button class="btn btn-rust btn-full" onclick="addPost()">Post to Board</button>
@@ -1575,10 +1596,11 @@
   const emo = { photo:'🖼️', idea:'💡', recipe:'🍳', news:'📰' };
 
   function addPost() {
-    const from  = document.getElementById('pFrom').value.trim();
-    const cat   = document.getElementById('pCat').value;
-    const title = document.getElementById('pTitle').value.trim();
-    const text  = document.getElementById('pText').value.trim();
+    const from    = document.getElementById('pFrom').value.trim();
+    const cat     = document.getElementById('pCat').value;
+    const title   = document.getElementById('pTitle').value.trim();
+    const text    = document.getElementById('pText').value.trim();
+    const notify  = document.getElementById('pNotify').checked;
 
     if (!from || !title) { alert('Please fill in your name and a title!'); return; }
     if (cat === 'photo' && !window._postPhotoData && !text) {
@@ -1619,6 +1641,19 @@
 
     closeSheet();
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Send email notification to the family group
+    if (notify) {
+      const subject = encodeURIComponent(`📬 New ${lbl[cat]} on the Family Hub — "${title}" by ${from}`);
+      const body    = encodeURIComponent(
+        `Hi everyone,\n\n${from} just posted something new on the Family Hub!\n\n` +
+        `Category: ${lbl[cat]}\nTitle: ${title}\n` +
+        (text ? `Message: ${text}\n` : '') +
+        `\nLog in to see it: https://ourfamilyhub.github.io\n\n` +
+        `— The Family Hub 🏠`
+      );
+      window.open(`mailto:deguzman-goose@googlegroups.com?subject=${subject}&body=${body}`, '_blank');
+    }
   }
 </script>
 
