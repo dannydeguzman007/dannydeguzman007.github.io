@@ -943,12 +943,47 @@
     function startListening() {
       const q = query(collection(db, 'posts'), orderBy('ts', 'desc'));
       onSnapshot(q, snapshot => {
-        snapshot.docChanges().forEach(change => {
-          if (change.type === 'added') renderPost(change.doc);
-        });
-        // Hide loading indicator
+
+        // Remove loader on first response
         const loader = document.getElementById('wall-loader');
         if (loader) loader.remove();
+
+        // If no posts yet, show a friendly empty state
+        const wall = document.getElementById('wall');
+        if (snapshot.empty) {
+          if (!document.getElementById('wall-empty')) {
+            wall.innerHTML = `
+              <div id="wall-empty" style="padding:2.5rem 1.5rem;text-align:center;color:var(--soft);">
+                <div style="font-size:2.5rem;margin-bottom:.75rem;">👋</div>
+                <p style="font-weight:600;color:var(--warm);margin-bottom:.4rem;">The board is empty — be the first to post!</p>
+                <p style="font-size:.82rem;line-height:1.7;">Tap the button below to share a photo, idea, recipe or update with the family.</p>
+              </div>`;
+          }
+          return;
+        }
+
+        // Remove empty state if posts arrive
+        const empty = document.getElementById('wall-empty');
+        if (empty) empty.remove();
+
+        // Render new/changed posts
+        snapshot.docChanges().forEach(change => {
+          if (change.type === 'added') renderPost(change.doc);
+          if (change.type === 'removed') {
+            const el = document.getElementById('post-' + change.doc.id);
+            if (el) el.remove();
+          }
+        });
+      }, err => {
+        // Handle permission errors gracefully
+        const loader = document.getElementById('wall-loader');
+        if (loader) loader.innerHTML = `
+          <div style="padding:2rem;text-align:center;color:var(--soft);">
+            <div style="font-size:1.5rem;margin-bottom:.5rem;">⚠️</div>
+            <p style="font-size:.85rem;color:var(--warm);font-weight:600;">Could not load posts</p>
+            <p style="font-size:.78rem;margin-top:.4rem;">Check your internet connection and reload the page.</p>
+          </div>`;
+        console.error('Firestore error:', err);
       });
     }
 
@@ -1233,63 +1268,10 @@
       <button class="tab" onclick="filterPosts('news',this)">📰 News</button>
     </div>
     <div class="wall" id="wall">
-      <!-- Loading indicator — replaced by real posts once Firebase connects -->
-      <div id="wall-loader" style="grid-column:1/-1;padding:2rem;text-align:center;color:var(--soft);">
+      <!-- Posts loaded from Firebase in real time — nothing hardcoded here -->
+      <div id="wall-loader" style="padding:2.5rem;text-align:center;color:var(--soft);">
         <div style="font-size:1.5rem;margin-bottom:.5rem;">⏳</div>
-        <p style="font-size:.85rem;">Loading posts…</p>
-      </div>
-
-      <!-- Sample posts shown until Firebase is connected -->
-      <div class="post sample-post" data-cat="photo">
-        <div class="post-emo" style="height:150px;">🌆</div>
-        <div class="post-body">
-          <p class="post-tag" style="color:#c99338;">📸 Photo</p>
-          <p class="post-title">Sydney at sunrise</p>
-          <p class="post-text">Caught this on my morning run. The harbour was completely still. Worth the 5am alarm.</p>
-        </div>
-        <div class="post-foot"><span class="post-from">Vincent</span><span>Sydney</span></div>
-      </div>
-      <div class="post sample-post" data-cat="idea">
-        <div class="post-body">
-          <p class="post-tag" style="color:#b85535;">💡 Idea</p>
-          <p class="post-title">Christmas in Amsterdam?</p>
-          <p class="post-text">What if we all came back to Amsterdam this December? The markets are beautiful and it's been 2 years since we were all together.</p>
-        </div>
-        <div class="post-foot"><span class="post-from">Dad</span><span>Amsterdam</span></div>
-      </div>
-      <div class="post sample-post" data-cat="recipe">
-        <div class="post-emo" style="height:120px;">🍝</div>
-        <div class="post-body">
-          <p class="post-tag" style="color:#6a8f6e;">🍳 Recipe</p>
-          <p class="post-title">Mama's pasta — finally written down!</p>
-          <p class="post-text">400g tagliatelle, 200g pancetta, 2 egg yolks, pecorino, black pepper. The secret is never add cream.</p>
-        </div>
-        <div class="post-foot"><span class="post-from">Mama</span><span>Amsterdam</span></div>
-      </div>
-      <div class="post sample-post" data-cat="news">
-        <div class="post-body">
-          <p class="post-tag" style="color:#4e3020;">📰 News</p>
-          <p class="post-title">Passed my first year exams! 🎉</p>
-          <p class="post-text">Results came in this morning. All passed, one distinction. Now I need to sleep for about 3 days straight.</p>
-        </div>
-        <div class="post-foot"><span class="post-from">Jacob</span><span>Ann Arbor</span></div>
-      </div>
-      <div class="post sample-post" data-cat="photo">
-        <div class="post-emo" style="height:130px;">🌨️</div>
-        <div class="post-body">
-          <p class="post-tag" style="color:#c99338;">📸 Photo</p>
-          <p class="post-title">First snow in Illinois</p>
-          <p class="post-text">It came down so fast. The campus looks like a snow globe right now.</p>
-        </div>
-        <div class="post-foot"><span class="post-from">Daniel</span><span>Urbana-Champaign</span></div>
-      </div>
-      <div class="post sample-post" data-cat="idea">
-        <div class="post-body">
-          <p class="post-tag" style="color:#b85535;">💡 Idea</p>
-          <p class="post-title">Weekly family video call?</p>
-          <p class="post-text">Sundays at 8pm Amsterdam / 5am Sydney (sorry Vincent). We could rotate who picks the topic.</p>
-        </div>
-        <div class="post-foot"><span class="post-from">Mama</span><span>Amsterdam</span></div>
+        <p style="font-size:.85rem;">Loading family posts…</p>
       </div>
     </div>
     <button class="add-btn" onclick="openSheet()">＋ Add Something to the Board</button>
