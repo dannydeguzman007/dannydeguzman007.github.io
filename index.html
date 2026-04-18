@@ -677,6 +677,22 @@
 
     .post-from { font-weight: 600; }
 
+    /* ── Post action buttons (edit / delete) ── */
+    .post-actions {
+      display: flex; gap: .4rem; align-items: center;
+    }
+
+    .post-action-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: .78rem; padding: .25rem .5rem;
+      border-radius: .4rem; color: var(--soft);
+      transition: background .15s, color .15s;
+      line-height: 1;
+    }
+
+    .post-action-btn:hover { background: rgba(78,48,32,.07); color: var(--warm); }
+    .post-action-btn.del:hover { background: rgba(184,85,53,.1); color: var(--rust); }
+
     .add-btn {
       display: flex; align-items: center; justify-content: center;
       gap: .5rem; width: 100%; margin-top: 1.4rem;
@@ -2128,6 +2144,7 @@
     card.className   = 'post';
     card.id          = 'post-' + id;
     card.dataset.cat = data.cat;
+    card.dataset.id  = id;
     card.innerHTML   = `
       ${topHTML}
       <div class="post-body">
@@ -2137,7 +2154,11 @@
       </div>
       <div class="post-foot">
         <span class="post-from">${data.from}</span>
-        <span>${when}</span>
+        <div class="post-actions">
+          <span style="color:var(--soft);font-size:.7rem;">${when}</span>
+          <button class="post-action-btn" title="Edit" onclick="openEditSheet('${id}')">✏️</button>
+          <button class="post-action-btn del" title="Delete" onclick="deletePost('${id}', this)">🗑</button>
+        </div>
       </div>`;
     return card;
   }
@@ -2259,6 +2280,74 @@
   };
 
   /* ════════════════════════════════════
+     EDIT & DELETE POSTS
+  ════════════════════════════════════ */
+  let _editId = null;
+
+  window.openEditSheet = function(id) {
+    const card = document.getElementById('post-' + id);
+    if (!card) return;
+    _editId = id;
+    const title = card.querySelector('.post-title')?.textContent || '';
+    const text  = card.querySelector('.post-text')?.textContent  || '';
+    const cat   = card.dataset.cat || 'idea';
+    document.getElementById('eCat').value   = cat;
+    document.getElementById('eTitle').value = title;
+    document.getElementById('eText').value  = text;
+    document.getElementById('editOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeEditSheet = function() {
+    document.getElementById('editOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    _editId = null;
+  };
+
+  window.saveEdit = async function() {
+    if (!_editId) return;
+    const cat   = document.getElementById('eCat').value;
+    const title = document.getElementById('eTitle').value.trim();
+    const text  = document.getElementById('eText').value.trim();
+    if (!title) { alert('Please enter a title.'); return; }
+    try {
+      const { doc: fsDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      await updateDoc(fsDoc(db, 'posts', _editId), { cat, title, text });
+      // Update card in place
+      const card = document.getElementById('post-' + _editId);
+      if (card) {
+        const tagEl   = card.querySelector('.post-tag');
+        const titleEl = card.querySelector('.post-title');
+        const textEl  = card.querySelector('.post-text');
+        if (tagEl)   { tagEl.textContent = lbl[cat]; tagEl.style.color = clr[cat]; }
+        if (titleEl)   titleEl.textContent = title;
+        if (textEl)    textEl.textContent = text;
+        else if (text) {
+          const p = document.createElement('p');
+          p.className = 'post-text'; p.textContent = text;
+          card.querySelector('.post-body').appendChild(p);
+        }
+        card.dataset.cat = cat;
+      }
+      closeEditSheet();
+    } catch(e) {
+      console.error('Edit error:', e);
+      alert('Could not save changes. Try again.');
+    }
+  };
+
+  window.deletePost = async function(id) {
+    if (!confirm('Delete this post? This cannot be undone.')) return;
+    try {
+      const { doc: fsDoc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      await deleteDoc(fsDoc(db, 'posts', id));
+    } catch(e) {
+      console.error('Delete error:', e);
+      alert('Could not delete post. Try again.');
+    }
+  };
+
+  /* ════════════════════════════════════
      2. FAMILY CARD SETTINGS
         Stores profile photos + backgrounds
         in Firestore doc: settings/familyCards
@@ -2347,6 +2436,36 @@
 
   console.log('✅ Firebase fully connected — all changes sync across the family!');
 </script>
+
+<!-- ══════════════════════ EDIT POST SHEET ══════════════════════ -->
+<div class="overlay" id="editOverlay" onclick="if(event.target===this)closeEditSheet()">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Edit Post</h3>
+
+    <div class="fg">
+      <label class="fl">Category</label>
+      <select class="fsel" id="eCat">
+        <option value="photo">📸 Photo</option>
+        <option value="idea">💡 Idea</option>
+        <option value="recipe">🍳 Recipe</option>
+        <option value="news">📰 News</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Title</label>
+      <input class="fi" id="eTitle" type="text" placeholder="Title…" />
+    </div>
+    <div class="fg">
+      <label class="fl">Message</label>
+      <textarea class="fta" id="eText" placeholder="Message…"></textarea>
+    </div>
+    <div class="ma">
+      <button class="btn btn-ghost" onclick="closeEditSheet()">Cancel</button>
+      <button class="btn btn-rust btn-full" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
