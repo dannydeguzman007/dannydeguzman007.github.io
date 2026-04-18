@@ -984,19 +984,8 @@
     /* ── Expose savePost so the existing addPost() function can call it ── */
     window._savePost = savePost;
 
-    /* ── Start listening as soon as the config is filled in ── */
-    if (!firebaseConfig.apiKey.includes('PASTE')) {
-      startListening();
-    } else {
-      // Show setup prompt instead of loading spinner
-      const loader = document.getElementById('wall-loader');
-      if (loader) loader.innerHTML = `
-        <div style="text-align:center;padding:2rem;color:var(--soft);">
-          <div style="font-size:2rem;margin-bottom:.75rem;">🔧</div>
-          <p style="font-weight:600;color:var(--warm);margin-bottom:.4rem;">Firebase not connected yet</p>
-          <p style="font-size:.82rem;line-height:1.7;">Follow the Firebase Setup Guide below to connect the live noticeboard. Sample posts are shown for now.</p>
-        </div>`;
-    }
+    /* ── Firebase is connected — start listening immediately ── */
+    startListening();
   </script>
 </head>
 <body>
@@ -1030,7 +1019,6 @@
       <a href="#noticeboard">Noticeboard</a>
       <a href="#map">Map</a>
       <a href="#notify">Notifications</a>
-      <a href="#firebase" style="color:var(--rust);">🔧 Firebase</a>
       <a href="#setup">GitHub Guide</a>
     </div>
     <button class="burger" id="burger" aria-label="Open menu">
@@ -1043,7 +1031,6 @@
     <a href="#noticeboard" onclick="closeNav()">Noticeboard</a>
     <a href="#map"         onclick="closeNav()">Map</a>
     <a href="#notify"      onclick="closeNav()">Notifications</a>
-    <a href="#firebase"    onclick="closeNav()" style="color:var(--rust);">🔧 Firebase Setup</a>
     <a href="#setup"       onclick="closeNav()">GitHub Guide</a>
   </div>
 </nav>
@@ -1623,91 +1610,6 @@
     <div class="tip-box">
       <strong style="color:var(--warm);">💡 Turn on Gmail notifications:</strong>
       On each iPhone → <strong>Settings → Notifications → Gmail</strong> → switch on <strong>"Allow Notifications."</strong> This makes family emails and calendar reminders pop up on the lock screen.
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════ FIREBASE SETUP GUIDE ══════════════════════ -->
-<section id="firebase" style="background:#1a1a2e;">
-  <div class="wrap">
-    <p class="eyebrow" style="color:#f0a500;">One-Time Setup</p>
-    <h2 class="sec-title" style="color:white;">Connect the Live Noticeboard</h2>
-    <div class="rule" style="background:#f0a500;"></div>
-    <p class="intro" style="color:rgba(255,255,255,.6);">
-      Follow these steps once and the noticeboard becomes live — posts from any family member appear instantly on everyone's screen. It's free and takes about 10 minutes.
-    </p>
-
-    <div class="steps" style="margin-top:2rem;">
-
-      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
-        <div class="sn" style="color:#f0a500;">1</div>
-        <div>
-          <h4 style="color:white;">Create a free Firebase account</h4>
-          <p style="color:rgba(255,255,255,.58);">Go to <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">firebase.google.com</code> → click <strong>"Get started"</strong> → sign in with your Gmail account (the same one you use for everything else).</p>
-        </div>
-      </div>
-
-      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
-        <div class="sn" style="color:#f0a500;">2</div>
-        <div>
-          <h4 style="color:white;">Create a new project</h4>
-          <p style="color:rgba(255,255,255,.58);">Click <strong>"Add project"</strong> → name it <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">family-hub</code> → click through the steps → click <strong>"Create project."</strong></p>
-        </div>
-      </div>
-
-      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
-        <div class="sn" style="color:#f0a500;">3</div>
-        <div>
-          <h4 style="color:white;">Add a web app & get your config</h4>
-          <p style="color:rgba(255,255,255,.58);">In your project dashboard → click the <strong>&lt;/&gt; Web</strong> icon → give it the name <em>Family Hub</em> → click <strong>"Register app."</strong> You'll see a block of code starting with <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">const firebaseConfig = {…}</code> — copy all of it.</p>
-        </div>
-      </div>
-
-      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
-        <div class="sn" style="color:#f0a500;">4</div>
-        <div>
-          <h4 style="color:white;">Paste your config into this file</h4>
-          <p style="color:rgba(255,255,255,.58);">Open <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">index.html</code> in GitHub → click the pencil ✏️ → search for <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">PASTE_YOUR_API_KEY</code> → replace the entire <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">firebaseConfig = {…}</code> block with the one you copied → Commit changes.</p>
-        </div>
-      </div>
-
-      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
-        <div class="sn" style="color:#f0a500;">5</div>
-        <div>
-          <h4 style="color:white;">Enable Firestore Database</h4>
-          <p style="color:rgba(255,255,255,.58);">In Firebase Console → left sidebar → <strong>"Firestore Database"</strong> → click <strong>"Create database"</strong> → choose <strong>"Start in test mode"</strong> → click <strong>Next</strong> → choose any location → click <strong>Enable.</strong></p>
-        </div>
-      </div>
-
-      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
-        <div class="sn" style="color:#f0a500;">6</div>
-        <div>
-          <h4 style="color:white;">Enable Storage (for photos)</h4>
-          <p style="color:rgba(255,255,255,.58);">In Firebase Console → left sidebar → <strong>"Storage"</strong> → click <strong>"Get started"</strong> → <strong>"Start in test mode"</strong> → click through → <strong>Done.</strong></p>
-        </div>
-      </div>
-
-      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
-        <div class="sn" style="color:#f0a500;">🎉</div>
-        <div>
-          <h4 style="color:white;">Done — the noticeboard is now live!</h4>
-          <p style="color:rgba(255,255,255,.58);">Reload the site and post something. It will instantly appear on every family member's screen anywhere in the world — Amsterdam, Sydney, Urbana-Champaign, Ann Arbor. Photos are stored in the cloud and load for everyone.</p>
-        </div>
-      </div>
-
-    </div>
-
-    <div style="margin-top:2rem;padding:1.25rem;background:rgba(240,165,0,.12);border-radius:1rem;border:1px solid rgba(240,165,0,.25);">
-      <p style="font-size:.85rem;color:rgba(255,255,255,.7);line-height:1.75;">
-        <strong style="color:#f0a500;">💡 Free forever?</strong> Yes — Firebase's free tier allows up to 1GB of storage and 50,000 reads per day, which is more than enough for a family noticeboard. No credit card needed.
-      </p>
-    </div>
-
-    <div style="margin-top:1rem;">
-      <a class="btn" href="https://firebase.google.com" target="_blank"
-        style="background:#f0a500;color:#1a1a2e;border-color:#f0a500;">
-        Go to Firebase →
-      </a>
     </div>
   </div>
 </section>
