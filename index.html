@@ -1276,6 +1276,9 @@
         <!-- Events list for selected day -->
         <div id="calEvents" style="margin-top:1rem;min-height:3rem;"></div>
 
+        <!-- DEBUG BOX — remove once calendar is working correctly -->
+        <div id="cal-debug" style="display:none;margin-top:1rem;padding:1rem;background:rgba(78,48,32,.05);border-radius:.75rem;border:1px dashed rgba(78,48,32,.2);font-size:.78rem;color:var(--soft);line-height:1.7;"></div>
+
         <!-- Loading state -->
         <div id="calLoading" style="text-align:center;padding:1rem;color:var(--soft);font-size:.85rem;">
           ⏳ Loading calendar…
@@ -1812,7 +1815,25 @@
         });
 
         document.getElementById('calLoading').style.display = 'none';
-        console.log('✅ Calendar API returned', allEvents.length, 'events:', allEvents.map(e => `${e.title} (${e.start.toDateString()}${e.allDay?' all-day':''})`));
+
+        // Show debug info directly on page (remove this once working)
+        const debugEl = document.getElementById('cal-debug');
+        if (debugEl) {
+          debugEl.style.display = 'block';
+          debugEl.innerHTML = `
+            <p style="font-weight:700;color:var(--warm);margin-bottom:.5rem;">
+              📋 API returned ${allEvents.length} event(s):
+            </p>
+            ${allEvents.length === 0
+              ? '<p style="color:var(--rust);">⚠️ No events found in this date range.</p>'
+              : allEvents.map(e => `
+                  <div style="padding:.4rem 0;border-bottom:1px solid rgba(78,48,32,.08);font-size:.8rem;">
+                    <strong style="color:var(--warm);">${e.title}</strong>
+                    <span style="color:var(--soft);"> — ${e.start.toDateString()}${e.allDay ? ' (all-day)' : ' (timed)'}</span>
+                  </div>`).join('')
+            }`;
+        }
+
         renderMonth();
 
       } catch(e) {
