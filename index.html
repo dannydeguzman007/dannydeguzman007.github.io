@@ -326,12 +326,15 @@
       opacity: 0;
       transition: opacity .2s;
       cursor: pointer;
+      text-align: center;
+      line-height: 1.3;
     }
 
     .profile-wrap:hover .cam-label { opacity: 1; }
-    /* On touch screens always show camera label subtly */
+    /* On touch screens — never show by default, only when tapped */
     @media (hover: none) {
-      .profile-circle .cam-label { opacity: 1; background: rgba(0,0,0,.28); }
+      .profile-circle .cam-label { opacity: 0; background: rgba(0,0,0,.45); }
+      .profile-circle.tapped .cam-label { opacity: 1; }
     }
 
     .profile-input { display: none; }
@@ -973,11 +976,11 @@
         <button class="bg-btn" onclick="document.getElementById('bgi-dad').click()">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-dad" onchange="changeBg('bg-dad',this)">
         <div class="fcard-body">
-          <div class="profile-wrap" onclick="document.getElementById('pi-dad').click()">
+          <div class="profile-wrap" onclick="handleProfileTap('pc-dad','pi-dad',this)">
             <div class="profile-circle" id="pc-dad" style="background: linear-gradient(135deg,#b85535,#4e3020);">
               <span class="initials">♥</span>
               <img id="pp-dad" alt="Dad & Mama" />
-              <div class="cam-label">📷 Add<br>Photo</div>
+              <div class="cam-label" id="lbl-PLACEHOLDER">📷<br>Tap to<br>add photo</div>
             </div>
             <input type="file" accept="image/*" class="profile-input" id="pi-dad" onchange="changeProfile('pp-dad','pc-dad',this)">
           </div>
@@ -998,11 +1001,11 @@
         <button class="bg-btn" onclick="document.getElementById('bgi-vincent').click()">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-vincent" onchange="changeBg('bg-vincent',this)">
         <div class="fcard-body">
-          <div class="profile-wrap" onclick="document.getElementById('pi-vincent').click()">
+          <div class="profile-wrap" onclick="handleProfileTap('pc-vincent','pi-vincent',this)">
             <div class="profile-circle" id="pc-vincent" style="background: #c99338;">
               <span class="initials">V</span>
               <img id="pp-vincent" alt="Vincent" />
-              <div class="cam-label">📷 Add<br>Photo</div>
+              <div class="cam-label" id="lbl-PLACEHOLDER">📷<br>Tap to<br>add photo</div>
             </div>
             <input type="file" accept="image/*" class="profile-input" id="pi-vincent" onchange="changeProfile('pp-vincent','pc-vincent',this)">
           </div>
@@ -1023,11 +1026,11 @@
         <button class="bg-btn" onclick="document.getElementById('bgi-daniel').click()">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-daniel" onchange="changeBg('bg-daniel',this)">
         <div class="fcard-body">
-          <div class="profile-wrap" onclick="document.getElementById('pi-daniel').click()">
+          <div class="profile-wrap" onclick="handleProfileTap('pc-daniel','pi-daniel',this)">
             <div class="profile-circle" id="pc-daniel" style="background: #6a8f6e;">
               <span class="initials">D</span>
               <img id="pp-daniel" alt="Daniel" />
-              <div class="cam-label">📷 Add<br>Photo</div>
+              <div class="cam-label" id="lbl-PLACEHOLDER">📷<br>Tap to<br>add photo</div>
             </div>
             <input type="file" accept="image/*" class="profile-input" id="pi-daniel" onchange="changeProfile('pp-daniel','pc-daniel',this)">
           </div>
@@ -1048,11 +1051,11 @@
         <button class="bg-btn" onclick="document.getElementById('bgi-jacob').click()">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-jacob" onchange="changeBg('bg-jacob',this)">
         <div class="fcard-body">
-          <div class="profile-wrap" onclick="document.getElementById('pi-jacob').click()">
+          <div class="profile-wrap" onclick="handleProfileTap('pc-jacob','pi-jacob',this)">
             <div class="profile-circle" id="pc-jacob" style="background: #00274c;">
               <span class="initials">J</span>
               <img id="pp-jacob" alt="Jacob" />
-              <div class="cam-label">📷 Add<br>Photo</div>
+              <div class="cam-label" id="lbl-PLACEHOLDER">📷<br>Tap to<br>add photo</div>
             </div>
             <input type="file" accept="image/*" class="profile-input" id="pi-jacob" onchange="changeProfile('pp-jacob','pc-jacob',this)">
           </div>
@@ -1125,49 +1128,62 @@
         </div>
       </div>
 
-      <!-- Calendar iframe (month view) -->
-      <div class="cal-responsive">
-        <iframe
-          id="calFrame"
-          src="https://calendar.google.com/calendar/embed?src=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com&ctz=Europe%2FAmsterdam&mode=MONTH&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0"
-          frameborder="0" scrolling="no"
-          style="display:none;">
-        </iframe>
+      <!-- Built-in mini calendar — works on all browsers & iPhones -->
+      <div style="background:var(--cream);padding:1.25rem;">
 
-        <!-- Fallback — shown by default, hidden if iframe loads successfully -->
-        <div class="cal-fallback" id="calFallback" style="display:flex;">
-          <span class="ico">📅</span>
-          <h4>Open the Family Calendar</h4>
-          <p>Tap below to view the calendar in Google Calendar, or subscribe so it appears permanently in your iPhone Calendar app.</p>
-          <a class="cal-pill cal-pill-primary"
-             href="https://calendar.google.com/calendar/r/month?cid=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com"
-             target="_blank">📅 Open Full Calendar →</a>
+        <!-- Month nav header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <button onclick="calPrev()" style="background:none;border:none;font-size:1.25rem;cursor:pointer;color:var(--warm);padding:.25rem .5rem;">‹</button>
+          <span id="calMonthLabel" style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--warm);"></span>
+          <button onclick="calNext()" style="background:none;border:none;font-size:1.25rem;cursor:pointer;color:var(--warm);padding:.25rem .5rem;">›</button>
         </div>
+
+        <!-- Day headers -->
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;">
+          <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--soft);letter-spacing:.08em;padding:.3rem 0;">SUN</div>
+          <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--soft);letter-spacing:.08em;padding:.3rem 0;">MON</div>
+          <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--soft);letter-spacing:.08em;padding:.3rem 0;">TUE</div>
+          <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--soft);letter-spacing:.08em;padding:.3rem 0;">WED</div>
+          <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--soft);letter-spacing:.08em;padding:.3rem 0;">THU</div>
+          <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--soft);letter-spacing:.08em;padding:.3rem 0;">FRI</div>
+          <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--soft);letter-spacing:.08em;padding:.3rem 0;">SAT</div>
+        </div>
+
+        <!-- Calendar grid -->
+        <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;"></div>
+
+        <!-- Events list for selected day -->
+        <div id="calEvents" style="margin-top:1rem;min-height:3rem;"></div>
+
+        <!-- Loading state -->
+        <div id="calLoading" style="text-align:center;padding:1rem;color:var(--soft);font-size:.85rem;">
+          ⏳ Loading calendar…
+        </div>
+
       </div>
 
-      <!-- Subscribe strip — always visible below the calendar -->
+      <!-- Subscribe strip -->
       <div class="cal-subscribe">
         <p>
-          <strong>Want the calendar in your iPhone?</strong><br>
-          Subscribe once and every family event appears automatically in your native Calendar app — even works offline.
+          <strong>Want this in your iPhone Calendar app?</strong><br>
+          Subscribe once and every family event syncs automatically — works offline too.
         </p>
         <div class="cal-subscribe-btns">
           <a class="cal-pill cal-pill-primary"
              href="https://calendar.google.com/calendar/r/month?cid=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com"
              target="_blank">📅 Open in Google Calendar</a>
           <a class="cal-pill cal-pill-secondary"
-             href="webcal://calendar.google.com/calendar/ical/c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com/public/basic.ics"
-             target="_blank">🍎 Add to iPhone Calendar</a>
+             href="webcal://calendar.google.com/calendar/ical/c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com/public/basic.ics">🍎 Add to iPhone Calendar</a>
         </div>
       </div>
 
     </div>
 
-    <!-- How to subscribe tip box -->
+    <!-- Tip for the boys -->
     <div style="margin-top:1.25rem;padding:1.1rem 1.25rem;background:rgba(78,48,32,.04);border-radius:1rem;border:1px solid rgba(78,48,32,.08);">
       <p style="font-size:.82rem;color:var(--soft);line-height:1.75;">
-        <strong style="color:var(--warm);">💡 For the boys (Vincent, Daniel, Jacob):</strong>
-        Tap <strong>"Add to iPhone Calendar"</strong> above on their phone — it subscribes them to the family calendar in the native iPhone Calendar app. They'll see family events alongside their own. New events you add appear on their phone automatically.
+        <strong style="color:var(--warm);">💡 For Vincent, Daniel &amp; Jacob:</strong>
+        Tap <strong>"Add to iPhone Calendar"</strong> above — it subscribes to the family calendar in your native iPhone Calendar app. New events appear on your phone automatically.
       </p>
     </div>
   </div>
@@ -1281,10 +1297,10 @@
       <div style="padding:0 1.5rem 1rem;">
         <div class="steps">
           <div class="step"><div class="sn">1</div><div><h4>Create a free GitHub account</h4><p>Go to <code>github.com</code> → click "Sign up." Pick a username and confirm your email.</p></div></div>
-          <div class="step"><div class="sn">2</div><div><h4>Create a repository</h4><p>Click <strong>"New"</strong>. Name it: <code>yourusername.github.io</code>. Tick <strong>"Add a README file"</strong> → <strong>"Create repository."</strong></p></div></div>
+          <div class="step"><div class="sn">2</div><div><h4>Create a repository</h4><p>Click <strong>"New"</strong>. Name it: <code>dannydeguzman007.github.io</code>. Tick <strong>"Add a README file"</strong> → <strong>"Create repository."</strong></p></div></div>
           <div class="step"><div class="sn">3</div><div><h4>Upload this file</h4><p>Click <strong>"Add file" → "Upload files."</strong> Drag your <code>index.html</code> in and click <strong>"Commit changes."</strong></p></div></div>
           <div class="step"><div class="sn">4</div><div><h4>Switch on GitHub Pages</h4><p>Click <strong>Settings</strong> → <strong>"Pages"</strong> → choose <code>main</code> → click <strong>Save.</strong> Wait 2 minutes.</p></div></div>
-          <div class="step"><div class="sn">5</div><div><h4>Your site is live! 🎉</h4><p>Visit <code>https://yourusername.github.io</code> — free forever. Share with the family and bookmark on every phone.</p></div></div>
+          <div class="step"><div class="sn">5</div><div><h4>Your site is live! 🎉</h4><p>Visit <code>https://dannydeguzman007.github.io</code> — free forever. Share with the family and bookmark on every phone.</p></div></div>
           <div class="step"><div class="sn">6</div><div><h4>To update later</h4><p>Go to your repository → click <code>index.html</code> → click the pencil ✏️ → edit → <strong>"Commit changes."</strong> Updates in under a minute.</p></div></div>
         </div>
       </div>
@@ -1411,10 +1427,45 @@
         const circle = document.getElementById(circleId);
         img.src = e.target.result; img.style.display = 'block';
         const init = circle.querySelector('.initials'); if (init) init.style.display = 'none';
+        circle.classList.add('has-photo');
       };
       reader.readAsDataURL(input.files[0]);
     }
   }
+
+  /* ── Profile photo tap handler ── */
+  // On first tap: show the overlay (Add/Change photo)
+  // On second tap: open the file picker
+  // Tapping anywhere else dismisses the overlay
+  function handleProfileTap(circleId, inputId, wrapEl) {
+    const circle = document.getElementById(circleId);
+    const input  = document.getElementById(inputId);
+    if (!circle) return;
+
+    if (circle.classList.contains('tapped')) {
+      // Second tap — open file picker
+      circle.classList.remove('tapped');
+      input.click();
+    } else {
+      // First tap — show overlay, update label text
+      // Dismiss any other open ones first
+      document.querySelectorAll('.profile-circle.tapped').forEach(c => c.classList.remove('tapped'));
+      const hasPhoto = circle.classList.contains('has-photo');
+      const label = circle.querySelector('.cam-label');
+      if (label) label.innerHTML = hasPhoto ? '📷<br>Change<br>photo' : '📷<br>Tap to<br>add photo';
+      circle.classList.add('tapped');
+
+      // Auto-dismiss after 3 seconds if not tapped again
+      setTimeout(() => circle.classList.remove('tapped'), 3000);
+    }
+  }
+
+  // Tap anywhere outside a profile circle dismisses the overlay
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.profile-wrap')) {
+      document.querySelectorAll('.profile-circle.tapped').forEach(c => c.classList.remove('tapped'));
+    }
+  });
 
   /* ── Live world clocks ── */
   const clocks = [
@@ -1548,31 +1599,197 @@
 
     document.getElementById('wall').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-  /* ── Calendar: show fallback by default, try iframe silently ── */
-  const calFrame    = document.getElementById('calFrame');
-  const calFallback = document.getElementById('calFallback');
 
-  if (calFrame) {
-    // Try to load the iframe silently in background
-    calFrame.addEventListener('load', () => {
-      // Only show if it actually loaded content (not a Google error page)
+  /* ══════════════════════════════════════
+     LIVE CALENDAR — Google Calendar API
+     Works on all browsers including Safari
+     No cookies, no iframes, no proxies
+  ══════════════════════════════════════ */
+  (function() {
+    const API_KEY   = 'AIzaSyB7ig1LHPRPPLh2QkAEf3c2IETQ4Ep9GYw';
+    const CAL_ID    = 'c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa@group.calendar.google.com';
+
+    let currentDate = new Date();
+    let allEvents   = [];
+    let selectedDay = null;
+
+    const months = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+
+    // Fetch events for a 3-month window centred on current month
+    async function loadEvents() {
+      const start = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+      const end   = new Date(currentDate.getFullYear(), currentDate.getMonth() + 2, 1);
+
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CAL_ID)}/events`
+        + `?key=${API_KEY}`
+        + `&timeMin=${start.toISOString()}`
+        + `&timeMax=${end.toISOString()}`
+        + `&singleEvents=true`
+        + `&orderBy=startTime`
+        + `&maxResults=100`;
+
       try {
-        // If we can access contentDocument it loaded same-origin — unlikely
-        // So we just check it didn't error by showing it after a beat
-        setTimeout(() => {
-          calFrame.style.display = 'block';
-          if (calFallback) calFallback.style.display = 'none';
-        }, 500);
-      } catch(e) {
-        // Cross-origin block — keep fallback showing
-      }
-    });
+        const res  = await fetch(url);
+        const data = await res.json();
 
-    calFrame.addEventListener('error', () => {
-      // Keep fallback showing
-      calFrame.style.display = 'none';
-    });
-  }
+        if (data.error) {
+          console.error('Calendar API error:', data.error);
+          showCalError(data.error.message);
+          return;
+        }
+
+        allEvents = (data.items || []).map(ev => ({
+          title: ev.summary || '(No title)',
+          start: ev.start.date
+            ? new Date(ev.start.date + 'T00:00:00')   // all-day
+            : new Date(ev.start.dateTime),              // timed
+          end: ev.end.date
+            ? new Date(ev.end.date + 'T00:00:00')
+            : new Date(ev.end.dateTime),
+          allDay: !!ev.start.date,
+          location: ev.location || '',
+          description: ev.description || ''
+        }));
+
+        document.getElementById('calLoading').style.display = 'none';
+        renderMonth();
+
+      } catch(e) {
+        showCalError('Network error — check your connection.');
+        console.error(e);
+      }
+    }
+
+    function showCalError(msg) {
+      document.getElementById('calLoading').innerHTML =
+        `<p style="color:var(--soft);font-size:.82rem;padding:.5rem 0;text-align:center;">
+          ⚠️ Could not load events.<br>
+          <a href="https://calendar.google.com/calendar/r" target="_blank"
+             style="color:var(--rust);font-weight:600;">Open Google Calendar →</a>
+        </p>`;
+    }
+
+    function renderMonth() {
+      const y  = currentDate.getFullYear();
+      const mo = currentDate.getMonth();
+      document.getElementById('calMonthLabel').textContent = months[mo] + ' ' + y;
+
+      const grid  = document.getElementById('calGrid');
+      grid.innerHTML = '';
+
+      const first = new Date(y, mo, 1).getDay();
+      const days  = new Date(y, mo + 1, 0).getDate();
+      const today = new Date();
+
+      // Empty cells before first day
+      for (let i = 0; i < first; i++) grid.appendChild(makeCell('', false, [], false));
+
+      for (let d = 1; d <= days; d++) {
+        const date      = new Date(y, mo, d);
+        const isToday   = date.toDateString() === today.toDateString();
+        const dayEvents = allEvents.filter(e => {
+          const es = new Date(e.start); es.setHours(0,0,0,0);
+          const ds = new Date(date);    ds.setHours(0,0,0,0);
+          return es.getTime() === ds.getTime();
+        });
+        const isSel = selectedDay && date.toDateString() === selectedDay.toDateString();
+        const cell  = makeCell(d, isToday, dayEvents, isSel);
+        cell.onclick = () => { selectedDay = date; renderMonth(); showDayEvents(date); };
+        grid.appendChild(cell);
+      }
+    }
+
+    function makeCell(d, isToday, events, isSel) {
+      const div = document.createElement('div');
+      div.style.cssText = [
+        'text-align:center', 'border-radius:.5rem',
+        `cursor:${d ? 'pointer' : 'default'}`,
+        'font-size:.82rem', 'padding:.45rem .2rem',
+        `font-weight:${isToday || isSel ? '700' : '400'}`,
+        `background:${isSel ? 'var(--rust)' : isToday ? 'var(--blush)' : 'transparent'}`,
+        `color:${isSel ? 'white' : isToday ? 'var(--rust)' : 'var(--ink)'}`,
+        'position:relative', 'transition:background .15s', 'min-height:2.4rem'
+      ].join(';');
+
+      if (d) {
+        const num = document.createElement('div');
+        num.textContent = d;
+        div.appendChild(num);
+
+        // Show up to 3 coloured event dots
+        if (events.length > 0) {
+          const dotsRow = document.createElement('div');
+          dotsRow.style.cssText = 'display:flex;justify-content:center;gap:2px;margin-top:3px;';
+          events.slice(0, 3).forEach(() => {
+            const dot = document.createElement('div');
+            dot.style.cssText = `width:5px;height:5px;border-radius:50%;flex-shrink:0;background:${isSel ? 'white' : 'var(--rust)'}`;
+            dotsRow.appendChild(dot);
+          });
+          if (events.length > 3) {
+            const more = document.createElement('span');
+            more.style.cssText = `font-size:.5rem;color:${isSel?'white':'var(--soft)'};line-height:6px;`;
+            more.textContent = '+';
+            dotsRow.appendChild(more);
+          }
+          div.appendChild(dotsRow);
+        }
+      }
+      return div;
+    }
+
+    function showDayEvents(date) {
+      const box    = document.getElementById('calEvents');
+      const label  = date.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+      const events = allEvents.filter(e => {
+        const es = new Date(e.start); es.setHours(0,0,0,0);
+        const ds = new Date(date);    ds.setHours(0,0,0,0);
+        return es.getTime() === ds.getTime();
+      });
+
+      if (!events.length) {
+        box.innerHTML = `
+          <div style="padding:.75rem 0;">
+            <p style="font-size:.8rem;color:var(--soft);">No events on <strong>${label}</strong>.</p>
+          </div>`;
+        return;
+      }
+
+      box.innerHTML = `
+        <p style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:.6rem;">${label}</p>
+        ${events.map(e => {
+          const timeStr = e.allDay ? 'All day' : e.start.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+          return `
+            <div style="background:white;border-radius:.75rem;padding:.75rem 1rem;margin-bottom:.5rem;border-left:3px solid var(--rust);box-shadow:0 1px 6px rgba(78,48,32,.07);">
+              <p style="font-size:.88rem;font-weight:600;color:var(--warm);">${e.title}</p>
+              <p style="font-size:.72rem;color:var(--soft);margin-top:.2rem;">🕐 ${timeStr}${e.location ? ' · 📍 ' + e.location : ''}</p>
+              ${e.description ? `<p style="font-size:.72rem;color:var(--soft);margin-top:.2rem;">${e.description.substring(0,80)}${e.description.length>80?'…':''}</p>` : ''}
+            </div>`;
+        }).join('')}`;
+    }
+
+    window.calPrev = () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      selectedDay = null;
+      document.getElementById('calEvents').innerHTML = '';
+      document.getElementById('calLoading').style.display = 'block';
+      document.getElementById('calLoading').textContent = '⏳ Loading…';
+      loadEvents();
+    };
+
+    window.calNext = () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      selectedDay = null;
+      document.getElementById('calEvents').innerHTML = '';
+      document.getElementById('calLoading').style.display = 'block';
+      document.getElementById('calLoading').textContent = '⏳ Loading…';
+      loadEvents();
+    };
+
+    // Kick off on page load
+    loadEvents();
+  })();
 
 </script>
 
@@ -1692,7 +1909,7 @@
       await addDoc(collection(db, 'posts'), { from, cat, title, text, imageUrl, ts: serverTimestamp() });
       if (notify) {
         const sub  = encodeURIComponent(`📬 New ${lbl[cat]} on the Family Hub — "${title}" by ${from}`);
-        const body = encodeURIComponent(`Hi everyone,\n\n${from} just posted on the Family Hub!\n\nCategory: ${lbl[cat]}\nTitle: ${title}\n${text ? 'Message: '+text+'\n' : ''}\nSee it: https://ourfamilyhub.github.io\n\n— The Family Hub 🏠`);
+        const body = encodeURIComponent(`Hi everyone,\n\n${from} just posted on the Family Hub!\n\nCategory: ${lbl[cat]}\nTitle: ${title}\n${text ? 'Message: '+text+'\n' : ''}\nSee it: https://dannydeguzman007.github.io\n\n— The Family Hub 🏠`);
         window.open(`mailto:deguzman-goose@googlegroups.com?subject=${sub}&body=${body}`, '_blank');
       }
     } catch(e) {
@@ -1775,7 +1992,10 @@
       const img    = document.getElementById(imgId);
       const circle = document.getElementById(circleId);
       if (img) { img.src = dataUrl; img.style.display = 'block'; }
-      if (circle) { const init = circle.querySelector('.initials'); if (init) init.style.display = 'none'; }
+      if (circle) {
+        const init = circle.querySelector('.initials'); if (init) init.style.display = 'none';
+        circle.classList.add('has-photo');
+      }
       // Upload + save
       try {
         const url = await uploadImage(`cards/${imgId}-${Date.now()}.jpg`, dataUrl);
