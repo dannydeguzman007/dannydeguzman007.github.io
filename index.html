@@ -417,15 +417,83 @@
       padding: .28rem .8rem; border-radius: 100px;
     }
 
-    .cal-responsive { width: 100%; background: var(--cream); }
+    /* iframe wrapper — position relative so overlay sits on top */
+    .cal-responsive {
+      width: 100%; background: var(--cream);
+      position: relative;
+    }
 
     .cal-responsive iframe {
       width: 100%; height: 600px;
       border: none; display: block;
     }
 
+    /* Fallback overlay — shown if iframe fails to load */
+    .cal-fallback {
+      display: none; /* shown via JS if iframe errors */
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem; padding: 2.5rem 1.5rem;
+      text-align: center; background: var(--cream);
+    }
+
+    .cal-fallback .ico { font-size: 3rem; }
+
+    .cal-fallback h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; color: var(--warm);
+    }
+
+    .cal-fallback p {
+      font-size: .85rem; color: var(--soft);
+      line-height: 1.75; max-width: 380px;
+    }
+
+    /* Subscribe strip below calendar */
+    .cal-subscribe {
+      border-top: 1px solid rgba(78,48,32,.08);
+      background: var(--cream);
+      padding: 1.1rem 1.4rem;
+      display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-between;
+      gap: .75rem;
+    }
+
+    .cal-subscribe p {
+      font-size: .8rem; color: var(--soft);
+      line-height: 1.5; flex: 1; min-width: 200px;
+    }
+
+    .cal-subscribe p strong { color: var(--warm); }
+
+    .cal-subscribe-btns {
+      display: flex; gap: .5rem; flex-wrap: wrap;
+    }
+
+    .cal-pill {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .5rem 1rem; border-radius: 100px;
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      text-decoration: none; transition: all .2s;
+      white-space: nowrap;
+    }
+
+    .cal-pill-primary {
+      background: var(--rust); color: white;
+    }
+
+    .cal-pill-primary:hover { background: var(--warm); }
+
+    .cal-pill-secondary {
+      background: transparent; color: var(--rust);
+      border: 2px solid var(--rust);
+    }
+
+    .cal-pill-secondary:hover { background: var(--rust); color: white; }
+
     @media (max-width: 639px) {
-      .cal-responsive iframe { height: 420px; }
+      .cal-responsive iframe { height: 380px; }
     }
 
     /* ══════════════ NOTICEBOARD ══════════════ */
@@ -1101,20 +1169,64 @@
     <p class="eyebrow">What's Happening</p>
     <h2 class="sec-title">Family Calendar</h2>
     <div class="rule"></div>
-    <p class="intro">Our shared family calendar — completely separate from anyone's personal Gmail. Everyone can view and add events from their own phone.</p>
+    <p class="intro">Our shared family calendar — see everyone's events at a glance. Add yours so the whole family stays in the loop.</p>
+
     <div class="cal-box">
+
+      <!-- Top bar -->
       <div class="cal-bar">
         <h3>📅 Our Shared Calendar</h3>
         <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
           <span class="badge">Family Only</span>
-          <a href="mailto:deguzman-goose@googlegroups.com?subject=📅%20New%20Family%20Event&body=Hi%20everyone%2C%20I%20just%20added%20a%20new%20event%20to%20the%20Family%20Calendar.%20Check%20it%20out!" 
+          <a href="mailto:deguzman-goose@googlegroups.com?subject=📅%20New%20Family%20Event&body=Hi%20everyone%2C%20I%20just%20added%20a%20new%20event%20to%20the%20Family%20Calendar.%20Check%20it%20out!"
              style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);border-radius:100px;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.28rem .8rem;text-decoration:none;white-space:nowrap;"
              target="_blank">✉️ Notify Family</a>
         </div>
       </div>
+
+      <!-- Calendar iframe (month view) -->
       <div class="cal-responsive">
-        <iframe src="https://calendar.google.com/calendar/embed?src=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com&ctz=America%2FChicago" frameborder="0" scrolling="no"></iframe>
+        <iframe
+          id="calFrame"
+          src="https://calendar.google.com/calendar/embed?src=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com&ctz=Europe%2FAmsterdam&mode=MONTH&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&bgcolor=%23f8f2e8"
+          frameborder="0" scrolling="no">
+        </iframe>
+
+        <!-- Fallback shown if iframe is blocked by browser -->
+        <div class="cal-fallback" id="calFallback">
+          <span class="ico">📅</span>
+          <h4>Calendar blocked by your browser</h4>
+          <p>Your browser is blocking the embedded calendar. Tap the button below to open it directly — or subscribe so it shows in your iPhone Calendar app automatically.</p>
+          <a class="cal-pill cal-pill-primary"
+             href="https://calendar.google.com/calendar/r/month?cid=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com"
+             target="_blank">📅 Open Full Calendar →</a>
+        </div>
       </div>
+
+      <!-- Subscribe strip — always visible below the calendar -->
+      <div class="cal-subscribe">
+        <p>
+          <strong>Want the calendar in your iPhone?</strong><br>
+          Subscribe once and every family event appears automatically in your native Calendar app — even works offline.
+        </p>
+        <div class="cal-subscribe-btns">
+          <a class="cal-pill cal-pill-primary"
+             href="https://calendar.google.com/calendar/r/month?cid=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com"
+             target="_blank">📅 Open in Google Calendar</a>
+          <a class="cal-pill cal-pill-secondary"
+             href="webcal://calendar.google.com/calendar/ical/c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com/public/basic.ics"
+             target="_blank">🍎 Add to iPhone Calendar</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- How to subscribe tip box -->
+    <div style="margin-top:1.25rem;padding:1.1rem 1.25rem;background:rgba(78,48,32,.04);border-radius:1rem;border:1px solid rgba(78,48,32,.08);">
+      <p style="font-size:.82rem;color:var(--soft);line-height:1.75;">
+        <strong style="color:var(--warm);">💡 For the boys (Vincent, Daniel, Jacob):</strong>
+        Tap <strong>"Add to iPhone Calendar"</strong> above on their phone — it subscribes them to the family calendar in the native iPhone Calendar app. They'll see family events alongside their own. New events you add appear on their phone automatically.
+      </p>
     </div>
   </div>
 </section>
@@ -1894,6 +2006,27 @@
 
     document.getElementById('wall').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+  /* ── Calendar iframe fallback ── */
+  const calFrame    = document.getElementById('calFrame');
+  const calFallback = document.getElementById('calFallback');
+
+  // Give iframe 6 seconds to load, show fallback if it doesn't
+  const calTimer = setTimeout(() => {
+    if (calFrame) {
+      calFrame.style.display = 'none';
+      calFallback.style.display = 'flex';
+    }
+  }, 6000);
+
+  // If it loads successfully, cancel the timer
+  if (calFrame) {
+    calFrame.addEventListener('load', () => {
+      clearTimeout(calTimer);
+      calFrame.style.display = 'block';
+      calFallback.style.display = 'none';
+    });
+  }
+
 </script>
 
 <!-- ══════════════════════ FIREBASE ══════════════════════ -->
