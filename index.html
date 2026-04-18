@@ -240,8 +240,8 @@
     }
 
     /* All cards equal size — no special wide treatment */
-    .fcard { min-height: 200px; }
-    .fcard.wide { grid-column: auto; min-height: 200px; }
+    .fcard { min-height: 240px; }
+    .fcard.wide { grid-column: auto; min-height: 240px; }
 
     .fcard {
       position: relative;
@@ -282,29 +282,34 @@
     .fcard-body {
       position: relative; z-index: 2;
       padding: 1rem 1.1rem 1.1rem;
-      display: flex; align-items: flex-end; gap: .85rem;
+      display: flex; align-items: flex-end; gap: 1rem;
     }
 
-    /* ── Profile circle — ALWAYS VISIBLE ── */
+    /* ── Profile circle — 65% of card width ── */
     .profile-wrap {
       position: relative; flex-shrink: 0;
-      width: 56px; height: 56px;
+      width: 65%;
+      padding-bottom: 65%;
+      height: 0;
     }
 
+    .fcard.wide .profile-wrap {
+      width: 45%;
+      padding-bottom: 45%;
+    }
 
     /* The circle itself — shows initials or uploaded photo */
     .profile-circle {
-      width: 100%; height: 100%;
+      position: absolute; inset: 0;
       border-radius: 50%;
       border: 3px solid rgba(255,255,255,.9);
       overflow: hidden;
       display: flex; align-items: center; justify-content: center;
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem; font-style: italic; font-weight: 700;
+      font-size: 3.5rem; font-style: italic; font-weight: 700;
       color: white;
       cursor: pointer;
-      position: relative;
-      /* background set per card */
+      width: 100%; height: 100%;
     }
 
     .profile-circle img {
@@ -316,26 +321,26 @@
 
     .profile-circle .cam-label {
       position: absolute; inset: 0;
-      background: rgba(0,0,0,.38);
+      background: rgba(0,0,0,.45);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       border-radius: 50%;
       font-family: 'DM Sans', sans-serif;
-      font-size: .55rem; font-weight: 700;
+      font-size: .75rem; font-weight: 700;
       letter-spacing: .05em; color: white;
       opacity: 0;
-      transition: opacity .2s;
+      transition: opacity .25s;
       cursor: pointer;
       text-align: center;
-      line-height: 1.3;
+      line-height: 1.4;
+      pointer-events: none;
     }
 
-    .profile-wrap:hover .cam-label { opacity: 1; }
-    /* On touch screens — never show by default, only when tapped */
-    @media (hover: none) {
-      .profile-circle .cam-label { opacity: 0; background: rgba(0,0,0,.45); }
-      .profile-circle.tapped .cam-label { opacity: 1; }
-    }
+    /* Desktop: show cam-label on hover */
+    .profile-wrap:hover .cam-label { opacity: 1; pointer-events: all; }
+
+    /* Touch: show only when .tapped class added via JS */
+    .profile-circle.tapped .cam-label { opacity: 1; pointer-events: all; }
 
     .profile-input { display: none; }
 
@@ -355,10 +360,10 @@
       text-shadow: 0 1px 4px rgba(0,0,0,.45);
     }
 
-    /* ── "Change background" pill — top right ── */
+    /* ── "Change background" pill — top right, hidden by default ── */
     .bg-btn {
       position: absolute; top: .8rem; right: .8rem; z-index: 3;
-      background: rgba(0,0,0,.38);
+      background: rgba(0,0,0,.5);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       border: 1px solid rgba(255,255,255,.3);
@@ -367,12 +372,19 @@
       font-size: .6rem; font-weight: 700;
       letter-spacing: .08em; text-transform: uppercase;
       color: white; cursor: pointer;
-      transition: background .2s;
+      opacity: 0;
+      transition: opacity .25s, background .2s;
       white-space: nowrap;
+      pointer-events: none;
     }
 
-    .bg-btn:hover { background: rgba(0,0,0,.6); }
+    /* Show on hover (desktop) */
+    .fcard:hover .bg-btn { opacity: 1; pointer-events: all; }
 
+    /* Show when .bg-visible class added via JS (touch) */
+    .fcard.bg-visible .bg-btn { opacity: 1; pointer-events: all; }
+
+    .bg-btn:hover { background: rgba(0,0,0,.7); }
     .bg-input { display: none; }
 
     /* Tip line */
@@ -512,6 +524,101 @@
     .tab.active { background: var(--warm); color: white; border-color: var(--warm); }
 
     .wall { columns: 1; column-gap: 1rem; }
+
+    /* ── Month/Year group headers ── */
+    .month-group {
+      break-inside: avoid;
+      margin-bottom: 1.5rem;
+    }
+
+    .month-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: .7rem 1rem;
+      background: var(--warm);
+      border-radius: .85rem;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      margin-bottom: .75rem;
+      transition: background .2s;
+    }
+
+    .month-header:hover { background: var(--rust); }
+    .month-header:active { transform: scale(.99); }
+
+    .month-header-left {
+      display: flex; align-items: center; gap: .6rem;
+    }
+
+    .month-header-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-style: italic;
+      font-weight: 600; color: white;
+    }
+
+    .month-header-count {
+      font-size: .65rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.6);
+      background: rgba(255,255,255,.12);
+      padding: .15rem .55rem; border-radius: 100px;
+    }
+
+    .month-toggle-icon {
+      font-size: .9rem; color: rgba(255,255,255,.8);
+      transition: transform .25s;
+      flex-shrink: 0;
+    }
+
+    .month-group.collapsed .month-toggle-icon {
+      transform: rotate(-90deg);
+    }
+
+    .month-posts {
+      columns: 1; column-gap: 1rem;
+      overflow: hidden;
+      max-height: 5000px;
+      transition: max-height .35s ease, opacity .25s ease;
+      opacity: 1;
+    }
+
+    .month-group.collapsed .month-posts {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    /* Year divider */
+    .year-divider {
+      display: flex; align-items: center; gap: .75rem;
+      margin: 2rem 0 1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .year-divider-line {
+      flex: 1; height: 1px;
+      background: rgba(78,48,32,.15);
+    }
+
+    .year-divider-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 700;
+      color: var(--soft); letter-spacing: .08em;
+      display: flex; align-items: center; gap: .4rem;
+    }
+
+    .year-divider-icon {
+      font-size: .8rem; transition: transform .25s;
+    }
+
+    .year-group.year-collapsed .year-divider-icon {
+      transform: rotate(-90deg);
+    }
+
+    .year-group.year-collapsed .year-content {
+      display: none;
+    }
 
     .post {
       break-inside: avoid; margin-bottom: 1rem;
@@ -901,6 +1008,7 @@
       .burger     { display: none; }
       .nav-drawer { display: none !important; }
       .wall       { columns: 2 260px; }
+      .month-posts { columns: 2 260px; }
       /* 4 equal columns on tablet+ */
       .fgrid { grid-template-columns: repeat(4, 1fr); }
       .notify-grid { grid-template-columns: 1fr 1fr; }
@@ -912,6 +1020,7 @@
 
     @media (min-width: 1000px) {
       .wall        { columns: 3 260px; }
+      .month-posts { columns: 3 260px; }
       .notify-grid { grid-template-columns: 1fr 1fr 1fr; }
     }
   </style>
@@ -973,7 +1082,7 @@
           background-color: #7a6a8a;
         "></div>
         <div class="fcard-overlay"></div>
-        <button class="bg-btn" onclick="document.getElementById('bgi-dad').click()">🖼 Change BG</button>
+        <button class="bg-btn" onclick="handleBgTap('card-dad','bgi-dad',this)">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-dad" onchange="changeBg('bg-dad',this)">
         <div class="fcard-body">
           <div class="profile-wrap" onclick="handleProfileTap('pc-dad','pi-dad',this)">
@@ -998,7 +1107,7 @@
           background-color: #4a7a9a;
         "></div>
         <div class="fcard-overlay"></div>
-        <button class="bg-btn" onclick="document.getElementById('bgi-vincent').click()">🖼 Change BG</button>
+        <button class="bg-btn" onclick="handleBgTap('card-vincent','bgi-vincent',this)">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-vincent" onchange="changeBg('bg-vincent',this)">
         <div class="fcard-body">
           <div class="profile-wrap" onclick="handleProfileTap('pc-vincent','pi-vincent',this)">
@@ -1023,7 +1132,7 @@
           background-color: #3d6b42;
         "></div>
         <div class="fcard-overlay"></div>
-        <button class="bg-btn" onclick="document.getElementById('bgi-daniel').click()">🖼 Change BG</button>
+        <button class="bg-btn" onclick="handleBgTap('card-daniel','bgi-daniel',this)">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-daniel" onchange="changeBg('bg-daniel',this)">
         <div class="fcard-body">
           <div class="profile-wrap" onclick="handleProfileTap('pc-daniel','pi-daniel',this)">
@@ -1048,7 +1157,7 @@
           background-color: #00274c;
         "></div>
         <div class="fcard-overlay"></div>
-        <button class="bg-btn" onclick="document.getElementById('bgi-jacob').click()">🖼 Change BG</button>
+        <button class="bg-btn" onclick="handleBgTap('card-jacob','bgi-jacob',this)">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-jacob" onchange="changeBg('bg-jacob',this)">
         <div class="fcard-body">
           <div class="profile-wrap" onclick="handleProfileTap('pc-jacob','pi-jacob',this)">
@@ -1401,6 +1510,37 @@
     drawer.classList.remove('open');
   }
 
+  /* ── Background tap handler — show on first tap, open picker on second ── */
+  const _bgTimers = {};
+  function handleBgTap(cardId, inputId, btn) {
+    const card  = document.getElementById(cardId);
+    const input = document.getElementById(inputId);
+    if (!card || !input) return;
+
+    if (card.classList.contains('bg-visible')) {
+      // Second tap — open file picker and dismiss
+      card.classList.remove('bg-visible');
+      clearTimeout(_bgTimers[cardId]);
+      input.click();
+    } else {
+      // First tap — show the button, auto-hide after 3s
+      // Dismiss any other open ones
+      document.querySelectorAll('.fcard.bg-visible').forEach(c => {
+        c.classList.remove('bg-visible');
+        clearTimeout(_bgTimers[c.id]);
+      });
+      card.classList.add('bg-visible');
+      _bgTimers[cardId] = setTimeout(() => card.classList.remove('bg-visible'), 3000);
+    }
+  }
+
+  // Tap outside dismisses bg overlay
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.fcard')) {
+      document.querySelectorAll('.fcard.bg-visible').forEach(c => c.classList.remove('bg-visible'));
+    }
+  });
+
   /* ── Change card background image ── */
   function changeBg(bgId, input) {
     if (!input.files || !input.files[0]) return;
@@ -1542,15 +1682,6 @@
   /* initialise: show photo upload by default (photo is first option) */
   window._postPhotoData = null;
   document.getElementById('photoUploadField').style.display = 'flex';
-
-  /* ── Filter posts ── */
-  function filterPosts(cat, btn) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('#wall .post').forEach(p => {
-      p.classList.toggle('hide', cat !== 'all' && p.dataset.cat !== cat);
-    });
-  }
 
   /* ── Sheet ── */
   const overlay = document.getElementById('overlay');
@@ -1823,9 +1954,117 @@
   const lbl = { photo:'📸 Photo', idea:'💡 Idea', recipe:'🍳 Recipe', news:'📰 News' };
   const emo = { photo:'🖼️', idea:'💡', recipe:'🍳', news:'📰' };
 
-  function renderPost(id, data) {
-    if (document.getElementById('post-' + id)) return;
+  const MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
 
+  /* ── Get month key e.g. "April 2025" ── */
+  function monthKey(ts) {
+    const d = ts ? ts.toDate() : new Date();
+    return MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function yearKey(ts) {
+    const d = ts ? ts.toDate() : new Date();
+    return String(d.getFullYear());
+  }
+
+  /* ── Get or create a year group ── */
+  function getYearGroup(year) {
+    const yId = 'year-' + year;
+    let yg = document.getElementById(yId);
+    if (!yg) {
+      yg = document.createElement('div');
+      yg.className = 'year-group';
+      yg.id = yId;
+      yg.dataset.year = year;
+
+      const divider = document.createElement('div');
+      divider.className = 'year-divider';
+      divider.onclick = () => {
+        yg.classList.toggle('year-collapsed');
+      };
+      divider.innerHTML = `
+        <div class="year-divider-line"></div>
+        <div class="year-divider-label">
+          <span class="year-divider-icon">▾</span>
+          ${year}
+        </div>
+        <div class="year-divider-line"></div>`;
+
+      const content = document.createElement('div');
+      content.className = 'year-content';
+
+      yg.appendChild(divider);
+      yg.appendChild(content);
+
+      // Insert in reverse chronological order
+      const wall = document.getElementById('wall');
+      const existing = wall.querySelectorAll('.year-group');
+      let inserted = false;
+      for (const eg of existing) {
+        if (parseInt(eg.dataset.year) < parseInt(year)) {
+          wall.insertBefore(yg, eg);
+          inserted = true; break;
+        }
+      }
+      if (!inserted) wall.appendChild(yg);
+    }
+    return yg.querySelector('.year-content');
+  }
+
+  /* ── Get or create a month group inside a year content div ── */
+  function getMonthGroup(yearContent, monthLabel, year, month) {
+    const mId = 'month-' + year + '-' + month;
+    let mg = document.getElementById(mId);
+    if (!mg) {
+      mg = document.createElement('div');
+      mg.className = 'month-group';
+      mg.id = mId;
+      mg.dataset.year = year;
+      mg.dataset.month = month;
+
+      const header = document.createElement('div');
+      header.className = 'month-header';
+      header.innerHTML = `
+        <div class="month-header-left">
+          <span class="month-header-label">${monthLabel}</span>
+          <span class="month-header-count" id="${mId}-count">0 posts</span>
+        </div>
+        <span class="month-toggle-icon">▾</span>`;
+      header.onclick = () => mg.classList.toggle('collapsed');
+
+      const posts = document.createElement('div');
+      posts.className = 'month-posts';
+      posts.id = mId + '-posts';
+
+      mg.appendChild(header);
+      mg.appendChild(posts);
+
+      // Insert in reverse chronological order within the year
+      const existing = yearContent.querySelectorAll('.month-group');
+      let inserted = false;
+      for (const em of existing) {
+        if (parseInt(em.dataset.month) < parseInt(month)) {
+          yearContent.insertBefore(mg, em);
+          inserted = true; break;
+        }
+      }
+      if (!inserted) yearContent.appendChild(mg);
+    }
+    return mg;
+  }
+
+  /* ── Update post count badge on month header ── */
+  function updateMonthCount(mId) {
+    const posts  = document.getElementById(mId + '-posts');
+    const badge  = document.getElementById(mId + '-count');
+    if (!posts || !badge) return;
+    const count = posts.querySelectorAll('.post').length;
+    badge.textContent = count + (count === 1 ? ' post' : ' posts');
+  }
+
+  /* ── Build a post card element ── */
+  function buildPostCard(id, data) {
     const topHTML = data.imageUrl
       ? `<img src="${data.imageUrl}" style="width:100%;max-height:280px;object-fit:cover;display:block;" />`
       : `<div class="post-emo" style="height:100px;">${emo[data.cat] || '📌'}</div>`;
@@ -1847,7 +2086,7 @@
     card.innerHTML   = `
       ${topHTML}
       <div class="post-body">
-        <p class="post-tag" style="color:${clr[data.cat]}">${lbl[data.cat]}</p>
+        <p class="post-tag" style="color:${clr[data.cat] || '#888'}">${lbl[data.cat] || '📌 Post'}</p>
         <p class="post-title">${data.title}</p>
         ${data.text ? `<p class="post-text">${data.text}</p>` : ''}
       </div>
@@ -1855,40 +2094,96 @@
         <span class="post-from">${data.from}</span>
         <span>${when}</span>
       </div>`;
-
-    document.getElementById('wall').prepend(card);
+    return card;
   }
 
-  /* Listen for posts */
+  /* ── Place a post into the correct month group ── */
+  function placePost(id, data) {
+    if (document.getElementById('post-' + id)) return;
+
+    const d     = data.ts ? data.ts.toDate() : new Date();
+    const year  = d.getFullYear();
+    const month = d.getMonth(); // 0-11
+    const mLabel = MONTHS[month] + ' ' + year;
+    const mId   = 'month-' + year + '-' + month;
+
+    const yearContent = getYearGroup(String(year));
+    const monthGroup  = getMonthGroup(yearContent, mLabel, year, month);
+    const postsDiv    = monthGroup.querySelector('.month-posts');
+
+    const card = buildPostCard(id, data);
+
+    // Insert newest first within the month
+    const existing = postsDiv.querySelectorAll('.post');
+    let inserted = false;
+    if (data.ts) {
+      for (const ep of existing) {
+        // we don't store ts on the DOM — just prepend newest
+      }
+    }
+    postsDiv.prepend(card);
+    updateMonthCount(mId);
+  }
+
+  /* ── Filter posts by category ── */
+  window.filterPosts = function(cat, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#wall .post').forEach(p => {
+      p.classList.toggle('hide', cat !== 'all' && p.dataset.cat !== cat);
+    });
+    // Show/hide month groups that become empty after filtering
+    document.querySelectorAll('.month-group').forEach(mg => {
+      const visible = [...mg.querySelectorAll('.post')].some(p => !p.classList.contains('hide'));
+      mg.style.display = visible ? '' : 'none';
+    });
+    document.querySelectorAll('.year-group').forEach(yg => {
+      const visible = [...yg.querySelectorAll('.post')].some(p => !p.classList.contains('hide'));
+      yg.style.display = visible ? '' : 'none';
+    });
+  };
+
+  /* ── Listen for posts from Firestore ── */
   const postsQ = query(collection(db, 'posts'), orderBy('ts', 'desc'));
   let firstSnap = true;
+
   onSnapshot(postsQ, snap => {
     const loader = document.getElementById('wall-loader');
     if (loader) loader.remove();
-    const empty  = document.getElementById('wall-empty');
 
     if (snap.empty) {
-      if (!empty) {
+      if (!document.getElementById('wall-empty')) {
         document.getElementById('wall').innerHTML = `
           <div id="wall-empty" style="padding:2.5rem 1.5rem;text-align:center;color:var(--soft);">
             <div style="font-size:2.5rem;margin-bottom:.75rem;">👋</div>
             <p style="font-weight:600;color:var(--warm);margin-bottom:.4rem;">The board is empty — be the first to post!</p>
-            <p style="font-size:.82rem;line-height:1.7;">Tap the button below to share a photo, idea, recipe or update with the family.</p>
+            <p style="font-size:.82rem;line-height:1.7;">Tap the button below to share something with the family.</p>
           </div>`;
       }
       firstSnap = false;
       return;
     }
 
+    const empty = document.getElementById('wall-empty');
     if (empty) empty.remove();
 
     if (firstSnap) {
-      snap.docs.forEach(d => renderPost(d.id, d.data()));
+      snap.docs.forEach(d => placePost(d.id, d.data()));
       firstSnap = false;
     } else {
       snap.docChanges().forEach(ch => {
-        if (ch.type === 'added')   renderPost(ch.doc.id, ch.doc.data());
-        if (ch.type === 'removed') { const el = document.getElementById('post-' + ch.doc.id); if (el) el.remove(); }
+        if (ch.type === 'added') {
+          placePost(ch.doc.id, ch.doc.data());
+        }
+        if (ch.type === 'removed') {
+          const el = document.getElementById('post-' + ch.doc.id);
+          if (el) {
+            const postsDiv = el.closest('.month-posts');
+            const mId = postsDiv ? postsDiv.id.replace('-posts','') : null;
+            el.remove();
+            if (mId) updateMonthCount(mId);
+          }
+        }
       });
     }
   }, err => {
