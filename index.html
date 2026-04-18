@@ -19,7 +19,6 @@
       --white:  #fffcf7;
       --ink:    #281808;
       --safe-b: env(safe-area-inset-bottom, 0px);
-      --safe-t: env(safe-area-inset-top, 0px);
     }
 
     *, *::before, *::after {
@@ -39,14 +38,11 @@
     /* ══════════════ HERO ══════════════ */
     .hero {
       min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       text-align: center;
       padding: 5rem 1.5rem 7rem;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
       background:
         radial-gradient(ellipse 80% 60% at 15% 40%, rgba(201,147,56,.14) 0%, transparent 65%),
         radial-gradient(ellipse 60% 55% at 85% 25%, rgba(106,143,110,.15) 0%, transparent 60%),
@@ -55,12 +51,10 @@
     }
 
     .ring {
-      position: absolute;
-      border-radius: 50%;
+      position: absolute; border-radius: 50%;
       border: 1px solid rgba(78,48,32,.07);
       pointer-events: none;
-      top: 50%; left: 50%;
-      transform: translate(-50%,-50%);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
     }
 
     .hero-eyebrow {
@@ -146,9 +140,9 @@
     .nav-links { display: flex; }
 
     .nav-links a {
-      padding: .9rem 1rem;
-      font-size: .69rem; font-weight: 600;
-      letter-spacing: .13em; text-transform: uppercase;
+      padding: .9rem .85rem;
+      font-size: .67rem; font-weight: 600;
+      letter-spacing: .11em; text-transform: uppercase;
       color: var(--soft); text-decoration: none;
       border-bottom: 2px solid transparent;
       transition: color .2s, border-color .2s;
@@ -157,7 +151,6 @@
 
     .nav-links a:hover { color: var(--rust); border-bottom-color: var(--rust); }
 
-    /* Hamburger */
     .burger {
       display: none; flex-direction: column; gap: 5px;
       padding: .9rem .25rem; cursor: pointer;
@@ -192,10 +185,9 @@
       transition: all .2s;
     }
 
-    .nav-drawer a:hover,
-    .nav-drawer a:active { color: var(--rust); border-left-color: var(--rust); }
+    .nav-drawer a:hover { color: var(--rust); border-left-color: var(--rust); }
 
-    /* ══════════════ LAYOUT ══════════════ */
+    /* ══════════════ SHARED LAYOUT ══════════════ */
     .wrap {
       max-width: 1080px; margin: 0 auto;
       padding: 4rem 1.25rem;
@@ -222,8 +214,53 @@
     .intro {
       font-size: .95rem; font-weight: 300;
       color: var(--soft); line-height: 1.85;
-      max-width: 520px;
+      max-width: 540px;
     }
+
+    /* Shared step style */
+    .steps { display: flex; flex-direction: column; gap: .9rem; margin-top: 2rem; }
+
+    .step {
+      display: flex; gap: 1rem; align-items: flex-start;
+      border-radius: 1rem; padding: 1.25rem 1.1rem;
+    }
+
+    .sn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-style: italic; font-weight: 700;
+      color: var(--gold); line-height: 1; min-width: 2rem;
+    }
+
+    .step h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-weight: 700;
+      margin-bottom: .35rem;
+    }
+
+    .step p { font-size: .81rem; line-height: 1.75; }
+
+    .step p code {
+      padding: .1em .4em; border-radius: 4px; font-size: .8em;
+    }
+
+    /* Shared btn */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: .4rem; padding: .75rem 1.35rem;
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .75rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer;
+      border: 2px solid transparent; transition: all .2s;
+      -webkit-appearance: none;
+    }
+
+    .btn-rust { background: var(--rust); color: white; border-color: var(--rust); }
+    .btn-rust:hover { background: var(--warm); border-color: var(--warm); }
+    .btn-ghost { background: transparent; color: var(--soft); border-color: rgba(78,48,32,.15); }
+    .btn-ghost:hover { border-color: var(--soft); }
+    .btn-full { flex: 1; }
 
     /* ══════════════ FAMILY ══════════════ */
     #family { background: var(--blush); }
@@ -323,7 +360,6 @@
       justify-content: center; font-size: .62rem; font-weight: 700;
     }
 
-    /* The real iframe — swap placeholder for this once ready */
     .cal-iframe { width: 100%; height: 560px; border: none; display: block; }
 
     /* ══════════════ NOTICEBOARD ══════════════ */
@@ -345,10 +381,7 @@
 
     .tab.active { background: var(--warm); color: white; border-color: var(--warm); }
 
-    /* Masonry wall */
-    .wall {
-      columns: 1; column-gap: 1rem;
-    }
+    .wall { columns: 1; column-gap: 1rem; }
 
     .post {
       break-inside: avoid; margin-bottom: 1rem;
@@ -356,7 +389,7 @@
       overflow: hidden;
       border: 1px solid rgba(78,48,32,.07);
       box-shadow: 0 2px 12px rgba(78,48,32,.06);
-      transition: transform .2s, box-shadow .2s;
+      transition: transform .2s;
       animation: rise .4s ease both;
     }
 
@@ -383,9 +416,7 @@
       color: var(--warm); margin-bottom: .35rem; line-height: 1.3;
     }
 
-    .post-text {
-      font-size: .81rem; color: var(--soft); line-height: 1.65;
-    }
+    .post-text { font-size: .81rem; color: var(--soft); line-height: 1.65; }
 
     .post-foot {
       display: flex; align-items: center;
@@ -436,46 +467,89 @@
 
     .ldot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
+    /* ══════════════ NOTIFICATIONS ══════════════ */
+    #notify { background: #e6ede6; }
+
+    #notify .eyebrow { color: #3d6b42; }
+
+    #notify .step {
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(78,48,32,.08);
+    }
+
+    #notify .step .sn { color: #3d6b42; }
+    #notify .step h4 { color: var(--warm); }
+    #notify .step p  { color: var(--soft); }
+
+    #notify .step p code {
+      background: rgba(61,107,66,.12);
+      color: #3d6b42;
+    }
+
+    .notify-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .notify-card {
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(78,48,32,.08);
+      border-radius: 1rem;
+      padding: 1.5rem 1.25rem;
+    }
+
+    .notify-icon { font-size: 2rem; margin-bottom: .75rem; display: block; }
+
+    .notify-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--warm); margin-bottom: .5rem;
+    }
+
+    .notify-card p {
+      font-size: .85rem; color: var(--soft);
+      line-height: 1.75; margin-bottom: 1rem;
+    }
+
+    .notify-steps {
+      display: flex; flex-direction: column; gap: .5rem;
+    }
+
+    .nstep {
+      display: flex; align-items: flex-start; gap: .65rem;
+      font-size: .81rem; color: var(--soft); line-height: 1.55;
+    }
+
+    .nnum {
+      background: #3d6b42; color: white;
+      border-radius: 50%; width: 20px; height: 20px;
+      min-width: 20px; display: flex; align-items: center;
+      justify-content: center; font-size: .62rem; font-weight: 700;
+      flex-shrink: 0; margin-top: .1rem;
+    }
+
     /* ══════════════ GITHUB GUIDE ══════════════ */
     #setup { background: var(--warm); }
+
     #setup .eyebrow { color: var(--gold); }
     #setup .sec-title { color: white; }
     #setup .intro { color: rgba(255,255,255,.6); }
     #setup .rule { background: var(--gold); }
 
-    #notify { background: #e8ede8; }
-    #notify .eyebrow { color: #4a7a4e; }
-    #notify .sec-title { color: var(--warm); }
-    #notify .step { background: rgba(255,255,255,.7); border-color: rgba(78,48,32,.08); }
-
-    .steps { display: flex; flex-direction: column; gap: .9rem; margin-top: 2rem; }
-
-    .step {
-      display: flex; gap: 1rem; align-items: flex-start;
+    #setup .step {
       background: rgba(255,255,255,.07);
       border: 1px solid rgba(255,255,255,.1);
-      border-radius: 1rem; padding: 1.25rem 1.1rem;
     }
 
-    .sn {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.9rem; font-style: italic; font-weight: 700;
-      color: var(--gold); line-height: 1; min-width: 1.8rem;
-    }
+    #setup .step .sn { color: var(--gold); }
+    #setup .step h4 { color: white; }
+    #setup .step p  { color: rgba(255,255,255,.58); }
 
-    .step h4 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem; font-weight: 700;
-      color: white; margin-bottom: .35rem;
-    }
-
-    .step p {
-      font-size: .81rem; color: rgba(255,255,255,.58); line-height: 1.75;
-    }
-
-    .step p code {
-      background: rgba(201,147,56,.22); color: var(--gold);
-      padding: .1em .4em; border-radius: 4px; font-size: .8em;
+    #setup .step p code {
+      background: rgba(201,147,56,.22);
+      color: var(--gold);
     }
 
     /* ══════════════ FOOTER ══════════════ */
@@ -492,7 +566,7 @@
       color: rgba(255,255,255,.75); margin-bottom: .3rem;
     }
 
-    /* ══════════════ MODAL (bottom sheet) ══════════════ */
+    /* ══════════════ MODAL SHEET ══════════════ */
     .overlay {
       position: fixed; inset: 0;
       background: rgba(40,24,8,.55);
@@ -554,24 +628,6 @@
 
     .ma { display: flex; gap: .65rem; }
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      gap: .4rem; padding: .75rem 1.35rem;
-      border-radius: 100px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: .75rem; font-weight: 600;
-      letter-spacing: .1em; text-transform: uppercase;
-      text-decoration: none; cursor: pointer;
-      border: 2px solid transparent; transition: all .2s;
-      -webkit-appearance: none;
-    }
-
-    .btn-rust { background: var(--rust); color: white; border-color: var(--rust); }
-    .btn-rust:hover { background: var(--warm); border-color: var(--warm); }
-    .btn-ghost { background: transparent; color: var(--soft); border-color: rgba(78,48,32,.15); }
-    .btn-ghost:hover { border-color: var(--soft); }
-    .btn-full { flex: 1; }
-
     /* ══════════════ ANIMATIONS ══════════════ */
     @keyframes rise {
       from { opacity:0; transform:translateY(16px); }
@@ -583,26 +639,24 @@
     }
 
     /* ══════════════ RESPONSIVE ══════════════ */
-
-    /* Mobile default: 1 column wall, hamburger shown */
     @media (max-width: 639px) {
       .nav-links { display: none; }
       .burger    { display: flex; }
       .ma        { flex-direction: column; }
     }
 
-    /* Tablet: 2-col wall, desktop nav */
     @media (min-width: 640px) {
       .burger     { display: none; }
       .nav-drawer { display: none !important; }
       .wall       { columns: 2 260px; }
       .fgrid      { grid-template-columns: repeat(4, 1fr); }
       .fcard.wide { grid-column: auto; }
+      .notify-grid { grid-template-columns: 1fr 1fr; }
     }
 
-    /* Desktop: 3-col wall */
     @media (min-width: 1000px) {
-      .wall { columns: 3 260px; }
+      .wall         { columns: 3 260px; }
+      .notify-grid  { grid-template-columns: 1fr 1fr 1fr; }
     }
   </style>
 </head>
@@ -694,9 +748,7 @@
     <p class="eyebrow">What's Happening</p>
     <h2 class="sec-title">Family Calendar</h2>
     <div class="rule"></div>
-    <p class="intro">
-      A calendar just for us — completely separate from anyone's personal Gmail. Everyone can view it and add events from their own phone.
-    </p>
+    <p class="intro">A calendar just for us — completely separate from anyone's personal Gmail. Everyone can view it and add events from their own phone.</p>
 
     <div class="cal-box">
       <div class="cal-bar">
@@ -704,17 +756,10 @@
         <span class="badge">Family Only</span>
       </div>
 
-      <!-- ═══════════════════════════════════════
-           CALENDAR PLACEHOLDER
-           Once your Google Calendar is set up,
-           delete this .cal-ph div and uncomment
-           the <iframe> line at the bottom.
-      ═══════════════════════════════════════ -->
       <div class="cal-ph">
         <span class="ico">🗓</span>
         <h4>Almost there!</h4>
-        <p>The calendar will appear right here once it's set up — it takes about 5 minutes:</p>
-
+        <p>The calendar will appear right here once it's set up. It takes about 5 minutes:</p>
         <div class="cal-steps">
           <div class="cstep">
             <div class="csn">1</div>
@@ -722,25 +767,22 @@
           </div>
           <div class="cstep">
             <div class="csn">2</div>
-            In the calendar settings, scroll to <strong>"Share with specific people"</strong> → add each son's Gmail address → set permission to <strong>"Make changes to events."</strong>
+            In calendar settings → <strong>"Share with specific people"</strong> → add each son's Gmail → set permission to <strong>"Make changes to events."</strong>
           </div>
           <div class="cstep">
             <div class="csn">3</div>
-            Scroll further to <strong>"Integrate calendar"</strong> → copy the <strong>"Embed code"</strong> (starts with &lt;iframe …).
+            Scroll to <strong>"Integrate calendar"</strong> → copy the <strong>"Embed code"</strong> (starts with &lt;iframe …).
           </div>
           <div class="cstep">
             <div class="csn">4</div>
-            Open this <code>index.html</code> file in GitHub, find the comment that says <code>REPLACE WITH IFRAME</code>, paste the embed code there, and save. Done!
+            Open <code>index.html</code> in GitHub, find <code>REPLACE WITH IFRAME</code>, paste the code there and save. Done!
           </div>
         </div>
-
-        <a class="btn btn-rust" href="https://calendar.google.com/calendar/r/settings/createcalendar" target="_blank">
-          Create Family Calendar →
-        </a>
+        <a class="btn btn-rust" href="https://calendar.google.com/calendar/r/settings/createcalendar" target="_blank">Create Family Calendar →</a>
       </div>
-
-      <!-- REPLACE WITH IFRAME — delete .cal-ph above and uncomment this: -->
-      <!-- <iframe src="YOUR_EMBED_URL_HERE" class="cal-iframe"></iframe> -->
+      <!-- REPLACE WITH IFRAME — delete .cal-ph above and uncomment:
+      <iframe src="YOUR_EMBED_URL_HERE" class="cal-iframe"></iframe>
+      -->
     </div>
   </div>
 </section>
@@ -754,15 +796,14 @@
     <p class="intro">Photos, ideas, recipes, news, funny stuff. Post it here for everyone to see. Scroll through everything or filter by type.</p>
 
     <div class="tabs">
-      <button class="tab active" onclick="filter('all',this)">All</button>
-      <button class="tab" onclick="filter('photo',this)">📸 Photos</button>
-      <button class="tab" onclick="filter('idea',this)">💡 Ideas</button>
-      <button class="tab" onclick="filter('recipe',this)">🍳 Recipes</button>
-      <button class="tab" onclick="filter('news',this)">📰 News</button>
+      <button class="tab active" onclick="filterPosts('all',this)">All</button>
+      <button class="tab" onclick="filterPosts('photo',this)">📸 Photos</button>
+      <button class="tab" onclick="filterPosts('idea',this)">💡 Ideas</button>
+      <button class="tab" onclick="filterPosts('recipe',this)">🍳 Recipes</button>
+      <button class="tab" onclick="filterPosts('news',this)">📰 News</button>
     </div>
 
     <div class="wall" id="wall">
-
       <div class="post" data-cat="photo">
         <div class="post-emo" style="height:150px;">🌆</div>
         <div class="post-body">
@@ -770,9 +811,7 @@
           <p class="post-title">Sydney at sunrise</p>
           <p class="post-text">Caught this on my morning run. The harbour was completely still. Worth the 5am alarm.</p>
         </div>
-        <div class="post-foot">
-          <span class="post-from">Vincent</span><span>Sydney</span>
-        </div>
+        <div class="post-foot"><span class="post-from">Vincent</span><span>Sydney</span></div>
       </div>
 
       <div class="post" data-cat="idea">
@@ -781,9 +820,7 @@
           <p class="post-title">Christmas in Amsterdam?</p>
           <p class="post-text">What if we all came back to Amsterdam this December? The markets are beautiful and it's been 2 years since we were all together.</p>
         </div>
-        <div class="post-foot">
-          <span class="post-from">Dad</span><span>Amsterdam</span>
-        </div>
+        <div class="post-foot"><span class="post-from">Dad</span><span>Amsterdam</span></div>
       </div>
 
       <div class="post" data-cat="recipe">
@@ -791,22 +828,18 @@
         <div class="post-body">
           <p class="post-tag" style="color:#6a8f6e;">🍳 Recipe</p>
           <p class="post-title">Mama's pasta — finally written down!</p>
-          <p class="post-text">You asked for years. Here it is: 400g tagliatelle, 200g pancetta, 2 egg yolks, pecorino, black pepper. The secret is never add cream.</p>
+          <p class="post-text">400g tagliatelle, 200g pancetta, 2 egg yolks, pecorino, black pepper. The secret is never add cream.</p>
         </div>
-        <div class="post-foot">
-          <span class="post-from">Mama</span><span>Amsterdam</span>
-        </div>
+        <div class="post-foot"><span class="post-from">Mama</span><span>Amsterdam</span></div>
       </div>
 
       <div class="post" data-cat="news">
         <div class="post-body">
           <p class="post-tag" style="color:#4e3020;">📰 News</p>
           <p class="post-title">Passed my first year exams! 🎉</p>
-          <p class="post-text">Results came in this morning. All passed, one distinction. Feeling good. Now I need to sleep for about 3 days straight.</p>
+          <p class="post-text">Results came in this morning. All passed, one distinction. Now I need to sleep for about 3 days straight.</p>
         </div>
-        <div class="post-foot">
-          <span class="post-from">Jacob</span><span>Ann Arbor</span>
-        </div>
+        <div class="post-foot"><span class="post-from">Jacob</span><span>Ann Arbor</span></div>
       </div>
 
       <div class="post" data-cat="photo">
@@ -816,9 +849,7 @@
           <p class="post-title">First snow in Illinois</p>
           <p class="post-text">It came down so fast. The campus looks like a snow globe right now.</p>
         </div>
-        <div class="post-foot">
-          <span class="post-from">Daniel</span><span>Urbana-Champaign</span>
-        </div>
+        <div class="post-foot"><span class="post-from">Daniel</span><span>Urbana-Champaign</span></div>
       </div>
 
       <div class="post" data-cat="idea">
@@ -827,11 +858,8 @@
           <p class="post-title">Weekly family video call?</p>
           <p class="post-text">Sundays at 8pm Amsterdam / 5am Sydney (sorry Vincent). We could rotate who picks the topic each week.</p>
         </div>
-        <div class="post-foot">
-          <span class="post-from">Mama</span><span>Amsterdam</span>
-        </div>
+        <div class="post-foot"><span class="post-from">Mama</span><span>Amsterdam</span></div>
       </div>
-
     </div>
 
     <button class="add-btn" onclick="openSheet()">＋ Add Something to the Board</button>
@@ -849,7 +877,6 @@
     <div class="map-box">
       <svg class="map-svg" viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg">
         <rect width="900" height="460" fill="#d8edf5"/>
-        <!-- Continents (simplified) -->
         <path d="M105,72 L200,62 L246,86 L263,126 L253,176 L223,218 L203,256 L183,276 L163,266 L143,236 L123,196 L103,156 L93,116 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
         <path d="M183,276 L219,271 L239,306 L245,356 L229,396 L209,416 L189,406 L173,366 L169,326 L174,291 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
         <path d="M386,52 L446,47 L466,70 L456,106 L423,116 L399,106 L383,86 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
@@ -857,28 +884,23 @@
         <path d="M459,47 L606,37 L683,62 L704,105 L683,145 L643,165 L593,155 L543,145 L491,133 L459,105 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
         <path d="M649,272 L723,262 L763,289 L768,335 L743,365 L703,370 L668,349 L647,315 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
 
-        <!-- Dashed lines connecting cities -->
         <line x1="416" y1="78" x2="721" y2="335" stroke="#b85535" stroke-width="1.3" stroke-dasharray="7,5" opacity=".3"/>
         <line x1="416" y1="78" x2="173" y2="154" stroke="#6a8f6e" stroke-width="1.3" stroke-dasharray="7,5" opacity=".3"/>
         <line x1="416" y1="78" x2="191" y2="139" stroke="#4e3020" stroke-width="1.3" stroke-dasharray="7,5" opacity=".3"/>
         <line x1="173" y1="154" x2="191" y2="139" stroke="#c99338" stroke-width="1" stroke-dasharray="5,4" opacity=".25"/>
 
-        <!-- Amsterdam -->
         <circle cx="416" cy="78" r="13" fill="#b85535" stroke="white" stroke-width="2.5"/>
         <text x="416" y="83" text-anchor="middle" fill="white" font-size="10" font-family="DM Sans,sans-serif">♥</text>
         <text x="416" y="61" text-anchor="middle" fill="#b85535" font-size="10" font-weight="600" font-family="DM Sans,sans-serif">Amsterdam</text>
 
-        <!-- Sydney -->
         <circle cx="721" cy="335" r="13" fill="#c99338" stroke="white" stroke-width="2.5"/>
         <text x="721" y="340" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">V</text>
         <text x="721" y="318" text-anchor="middle" fill="#c99338" font-size="10" font-weight="600" font-family="DM Sans,sans-serif">Sydney</text>
 
-        <!-- Urbana-Champaign -->
         <circle cx="173" cy="154" r="13" fill="#6a8f6e" stroke="white" stroke-width="2.5"/>
         <text x="173" y="159" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">D</text>
         <text x="173" y="137" text-anchor="middle" fill="#6a8f6e" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">U-C, IL</text>
 
-        <!-- Ann Arbor -->
         <circle cx="191" cy="139" r="13" fill="#4e3020" stroke="white" stroke-width="2.5"/>
         <text x="191" y="144" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">J</text>
         <text x="228" y="136" text-anchor="start" fill="#4e3020" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">Ann Arbor</text>
@@ -890,6 +912,96 @@
         <div class="li"><span class="ldot" style="background:#6a8f6e"></span>Daniel — Urbana-Champaign</div>
         <div class="li"><span class="ldot" style="background:#4e3020"></span>Jacob — Ann Arbor</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ NOTIFICATIONS ══════════════════════ -->
+<section id="notify">
+  <div class="wrap">
+    <p class="eyebrow">Stay in the Loop</p>
+    <h2 class="sec-title">Family Notifications</h2>
+    <div class="rule"></div>
+    <p class="intro">Three ways to make sure the whole family gets a nudge on their phone whenever something important happens — no new apps needed.</p>
+
+    <div class="notify-grid">
+
+      <div class="notify-card">
+        <span class="notify-icon">📧</span>
+        <h3>Family Group Email</h3>
+        <p>One email address that reaches everyone at once. Send it and all five of you get it in your Gmail inbox — which pops up on iPhone just like a text.</p>
+        <div class="notify-steps">
+          <div class="nstep">
+            <div class="nnum">1</div>
+            Go to <strong>groups.google.com</strong> → click <strong>"Create group"</strong> → name it <em>Our Family</em> and pick an address like <em>ourfamily@googlegroups.com</em>.
+          </div>
+          <div class="nstep">
+            <div class="nnum">2</div>
+            Click <strong>People → Members → Add members</strong> → add Mama, Vincent, Daniel and Jacob's Gmail addresses. They each get an invite to tap Accept.
+          </div>
+          <div class="nstep">
+            <div class="nnum">3</div>
+            Done! Now email that address whenever you want to reach everyone at once.
+          </div>
+        </div>
+        <div style="margin-top:1.1rem;">
+          <a class="btn btn-rust" href="https://groups.google.com/my-groups" target="_blank">Set Up Group →</a>
+        </div>
+      </div>
+
+      <div class="notify-card">
+        <span class="notify-icon">📅</span>
+        <h3>Calendar Reminders</h3>
+        <p>Once the shared Family Calendar is active, Google automatically emails everyone when a new event is added or coming up. Nothing extra to set up — it's built in.</p>
+        <div class="notify-steps">
+          <div class="nstep">
+            <div class="nnum">1</div>
+            Set up the Family Calendar (see the Calendar section above).
+          </div>
+          <div class="nstep">
+            <div class="nnum">2</div>
+            Each person can go to <strong>Google Calendar → Settings → Notifications</strong> to choose how far in advance they want reminders — 1 day, 1 hour, etc.
+          </div>
+          <div class="nstep">
+            <div class="nnum">3</div>
+            Reminders land in Gmail and show as iPhone notifications automatically.
+          </div>
+        </div>
+        <div style="margin-top:1.1rem;">
+          <a class="btn btn-rust" href="https://calendar.google.com/calendar/r/settings" target="_blank">Calendar Settings →</a>
+        </div>
+      </div>
+
+      <div class="notify-card">
+        <span class="notify-icon">📱</span>
+        <h3>Add Site to Home Screen</h3>
+        <p>Save this site to your iPhone home screen so it looks and opens like an app — one tap and you're on the Family Hub. Do this on every family phone.</p>
+        <div class="notify-steps">
+          <div class="nstep">
+            <div class="nnum">1</div>
+            Open the Family Hub link in <strong>Safari</strong> on your iPhone (must be Safari, not Chrome).
+          </div>
+          <div class="nstep">
+            <div class="nnum">2</div>
+            Tap the <strong>share button</strong> (box with arrow ↑) at the bottom of the screen.
+          </div>
+          <div class="nstep">
+            <div class="nnum">3</div>
+            Scroll down and tap <strong>"Add to Home Screen"</strong> → tap <strong>Add.</strong> The site icon now lives on your home screen!
+          </div>
+        </div>
+        <div style="margin-top:1.1rem;">
+          <span class="btn btn-rust" style="opacity:.5;cursor:default;">Do this in Safari on iPhone</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:2rem; padding:1.25rem; background:rgba(255,255,255,.6); border-radius:1rem; border:1px solid rgba(78,48,32,.08);">
+      <p style="font-size:.85rem; color:var(--soft); line-height:1.75;">
+        <strong style="color:var(--warm);">💡 Make sure Gmail notifications are on:</strong>
+        On each iPhone go to <strong>Settings → Notifications → Gmail</strong> and make sure <strong>"Allow Notifications"</strong> is switched on. This is what makes family emails and calendar reminders pop up on the lock screen.
+      </p>
     </div>
   </div>
 </section>
@@ -907,21 +1019,21 @@
         <div class="sn">1</div>
         <div>
           <h4>Create a free GitHub account</h4>
-          <p>Go to <code>github.com</code> → click "Sign up." Use your email, pick any username like <code>ourfamilyhub</code>, and confirm your email.</p>
+          <p>Go to <code>github.com</code> → click "Sign up." Use your email, pick a username like <code>ourfamilyhub</code>, and confirm your email.</p>
         </div>
       </div>
       <div class="step">
         <div class="sn">2</div>
         <div>
           <h4>Create a repository (a project folder)</h4>
-          <p>Click the green <strong>"New"</strong> button. Name it exactly: <code>yourusername.github.io</code> (swap in your username). Tick <strong>"Add a README file"</strong> and click <strong>"Create repository."</strong></p>
+          <p>Click the green <strong>"New"</strong> button. Name it exactly: <code>yourusername.github.io</code>. Tick <strong>"Add a README file"</strong> and click <strong>"Create repository."</strong></p>
         </div>
       </div>
       <div class="step">
         <div class="sn">3</div>
         <div>
           <h4>Upload this file</h4>
-          <p>Click <strong>"Add file" → "Upload files."</strong> Drag your <code>index.html</code> file into the box. Write "First upload" in the message box and click <strong>"Commit changes"</strong> — that just means "save."</p>
+          <p>Click <strong>"Add file" → "Upload files."</strong> Drag your <code>index.html</code> file in. Write "First upload" in the message box and click <strong>"Commit changes."</strong></p>
         </div>
       </div>
       <div class="step">
@@ -935,86 +1047,16 @@
         <div class="sn">5</div>
         <div>
           <h4>Your site is live! 🎉</h4>
-          <p>Visit <code>https://yourusername.github.io</code> — it's online and free forever. Share that link with Vincent, Daniel, and Jacob. Bookmark it on every phone.</p>
+          <p>Visit <code>https://yourusername.github.io</code> — it's online and free forever. Share that link with the whole family and bookmark it on every phone.</p>
         </div>
       </div>
       <div class="step">
         <div class="sn">6</div>
         <div>
           <h4>To update the site later</h4>
-          <p>Go to your GitHub repository → click the <code>index.html</code> file → click the pencil ✏️ icon → make your changes → click <strong>"Commit changes."</strong> The live site updates in under a minute.</p>
+          <p>Go to your GitHub repository → click <code>index.html</code> → click the pencil ✏️ icon → make your changes → click <strong>"Commit changes."</strong> The live site updates in under a minute.</p>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════ NOTIFICATIONS ══════════════════════ -->
-<section id="notify">
-  <div class="wrap">
-    <p class="eyebrow">Stay in the Loop</p>
-    <h2 class="sec-title">Family Notifications</h2>
-    <div class="rule"></div>
-    <p class="intro">
-      The site can't send iPhone push notifications on its own — but these two free Google tools mean the family gets a nudge in their Gmail inbox (which does pop up on iPhone) whenever something important happens.
-    </p>
-
-    <div class="steps" style="margin-top:2rem;">
-
-      <div class="step">
-        <div class="sn">📧</div>
-        <div>
-          <h4>Set up a Family Group Email</h4>
-          <p>A Google Group gives your family one shared email address — something like <code>ourfamily@googlegroups.com</code>. Send one email to that address and it lands in everyone's Gmail inbox instantly. Great for announcements, trip plans, or sharing something from the noticeboard.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="sn">1</div>
-        <div>
-          <h4>Create the group</h4>
-          <p>Go to <code>groups.google.com</code> → click <strong>"Create group"</strong> → give it a name like <em>Our Family</em> and an email address → set "Who can post" to <strong>"Group members"</strong> → click <strong>Create.</strong></p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="sn">2</div>
-        <div>
-          <h4>Add everyone</h4>
-          <p>Click <strong>"People" → "Members" → "Add members."</strong> Add Mama, Vincent, Daniel, and Jacob's Gmail addresses. They'll each get an invite email — they just tap <strong>Accept</strong> and they're in.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="sn">3</div>
-        <div>
-          <h4>Make sure Gmail notifications are on (iPhone)</h4>
-          <p>On each iPhone: go to <strong>Settings → Notifications → Gmail</strong> → make sure <strong>"Allow Notifications"</strong> is switched on. Now every family email shows up as a pop-up on their lock screen — just like a text message.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="sn">📅</div>
-        <div>
-          <h4>Calendar event reminders</h4>
-          <p>Once the shared Family Calendar is set up, Google automatically emails everyone when a new event is added or when an event is coming up. No extra setup needed — it's built in. Each person can also set their own reminder timing in their Google Calendar settings.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="sn">📱</div>
-        <div>
-          <h4>Add this site to your iPhone Home Screen</h4>
-          <p>Open the site in <strong>Safari</strong> → tap the share button (box with arrow ↑) → tap <strong>"Add to Home Screen"</strong> → tap <strong>Add.</strong> It sits on your home screen like an app. Do this on every family phone so the site is always one tap away.</p>
-        </div>
-      </div>
-
-    </div>
-
-    <div style="margin-top:2rem;">
-      <a class="btn btn-rust" href="https://groups.google.com/my-groups" target="_blank" style="display:inline-flex;">
-        Set Up Family Group →
-      </a>
     </div>
   </div>
 </section>
@@ -1086,7 +1128,7 @@
   }
 
   /* Filter */
-  function filter(cat, btn) {
+  function filterPosts(cat, btn) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     document.querySelectorAll('#wall .post').forEach(p => {
