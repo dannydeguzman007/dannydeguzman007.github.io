@@ -187,7 +187,7 @@
 
     .nav-drawer a:hover { color: var(--rust); border-left-color: var(--rust); }
 
-    /* ══════════════ SHARED LAYOUT ══════════════ */
+    /* ══════════════ SHARED ══════════════ */
     .wrap {
       max-width: 1080px; margin: 0 auto;
       padding: 4rem 1.25rem;
@@ -217,31 +217,6 @@
       max-width: 540px;
     }
 
-    .steps { display: flex; flex-direction: column; gap: .9rem; margin-top: 2rem; }
-
-    .step {
-      display: flex; gap: 1rem; align-items: flex-start;
-      border-radius: 1rem; padding: 1.25rem 1.1rem;
-    }
-
-    .sn {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.9rem; font-style: italic; font-weight: 700;
-      color: var(--gold); line-height: 1; min-width: 2rem;
-    }
-
-    .step h4 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem; font-weight: 700;
-      margin-bottom: .35rem;
-    }
-
-    .step p { font-size: .81rem; line-height: 1.75; }
-
-    .step p code {
-      padding: .1em .4em; border-radius: 4px; font-size: .8em;
-    }
-
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
       gap: .4rem; padding: .75rem 1.35rem;
@@ -260,43 +235,157 @@
     .btn-ghost:hover { border-color: var(--soft); }
     .btn-full { flex: 1; }
 
-    /* ══════════════ FAMILY ══════════════ */
+    /* ══════════════════════════════════
+       FAMILY CARDS
+    ══════════════════════════════════ */
     #family { background: var(--blush); }
 
     .fgrid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: .9rem; margin-top: 2rem;
+      gap: 1rem; margin-top: 2rem;
     }
 
     .fcard {
-      background: var(--white);
-      border-radius: 1.1rem;
-      padding: 1.6rem 1rem 1.4rem;
-      text-align: center;
-      border: 1px solid rgba(78,48,32,.07);
-      box-shadow: 0 2px 14px rgba(78,48,32,.07);
-      transition: transform .25s;
+      position: relative;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      box-shadow: 0 6px 24px rgba(78,48,32,.18);
     }
 
-    .fcard.wide { grid-column: 1 / -1; }
-    .fcard:active { transform: scale(.98); }
+    .fcard.wide { grid-column: 1 / -1; min-height: 280px; }
 
-    .av {
-      width: 54px; height: 54px; border-radius: 50%;
+    /* ── Background image layer ── */
+    .fcard-bg {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: transform .5s ease;
+      /* Fallback gradient shown if image fails */
+    }
+
+    .fcard:hover .fcard-bg { transform: scale(1.04); }
+
+    /* ── Dark gradient so text is always readable ── */
+    .fcard-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,5,0,.08) 0%,
+        rgba(10,5,0,.18) 45%,
+        rgba(10,5,0,.78) 100%
+      );
+      z-index: 1;
+    }
+
+    /* ── Bottom content row ── */
+    .fcard-body {
+      position: relative; z-index: 2;
+      padding: 1rem 1.1rem 1.1rem;
+      display: flex; align-items: flex-end; gap: .85rem;
+    }
+
+    /* ── Profile circle — ALWAYS VISIBLE ── */
+    .profile-wrap {
+      position: relative; flex-shrink: 0;
+      width: 56px; height: 56px;
+    }
+
+    .fcard.wide .profile-wrap { width: 68px; height: 68px; }
+
+    /* The circle itself — shows initials or uploaded photo */
+    .profile-circle {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.9);
+      overflow: hidden;
       display: flex; align-items: center; justify-content: center;
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem; font-style: italic;
-      color: white; margin: 0 auto .9rem;
+      font-size: 1.4rem; font-style: italic; font-weight: 700;
+      color: white;
+      cursor: pointer;
+      position: relative;
+      /* background set per card */
     }
+
+    .profile-circle img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: none; /* shown via JS once uploaded */
+    }
+
+    .profile-circle .cam-label {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.38);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border-radius: 50%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .55rem; font-weight: 700;
+      letter-spacing: .05em; color: white;
+      opacity: 0;
+      transition: opacity .2s;
+      cursor: pointer;
+    }
+
+    .profile-wrap:hover .cam-label { opacity: 1; }
+    /* On touch screens always show camera label subtly */
+    @media (hover: none) {
+      .profile-circle .cam-label { opacity: 1; background: rgba(0,0,0,.28); }
+    }
+
+    .profile-input { display: none; }
+
+    /* ── Name / city text ── */
+    .fcard-info { flex: 1; }
 
     .fn {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.15rem; font-weight: 700;
-      color: var(--warm); margin-bottom: .3rem;
+      font-size: 1.25rem; font-weight: 700; color: white;
+      text-shadow: 0 1px 6px rgba(0,0,0,.5);
+      margin-bottom: .15rem;
     }
 
-    .fc { font-size: .74rem; color: var(--soft); }
+    .fcard.wide .fn { font-size: 1.45rem; }
+
+    .fc {
+      font-size: .72rem; color: rgba(255,255,255,.88);
+      text-shadow: 0 1px 4px rgba(0,0,0,.45);
+    }
+
+    /* ── "Change background" pill — top right ── */
+    .bg-btn {
+      position: absolute; top: .8rem; right: .8rem; z-index: 3;
+      background: rgba(0,0,0,.38);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 100px;
+      padding: .28rem .72rem;
+      font-size: .6rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: white; cursor: pointer;
+      transition: background .2s;
+      white-space: nowrap;
+    }
+
+    .bg-btn:hover { background: rgba(0,0,0,.6); }
+
+    .bg-input { display: none; }
+
+    /* Tip line */
+    .photo-tip {
+      margin-top: .9rem;
+      font-size: .78rem; color: var(--soft);
+      display: flex; align-items: flex-start; gap: .4rem;
+      line-height: 1.5;
+    }
 
     /* ══════════════ CALENDAR ══════════════ */
     #calendar { background: var(--white); }
@@ -328,18 +417,11 @@
       padding: .28rem .8rem; border-radius: 100px;
     }
 
-    /* Calendar iframe — responsive wrapper */
-    .cal-responsive {
-      position: relative;
-      width: 100%;
-      background: var(--cream);
-    }
+    .cal-responsive { width: 100%; background: var(--cream); }
 
     .cal-responsive iframe {
-      width: 100%;
-      height: 600px;
-      border: none;
-      display: block;
+      width: 100%; height: 600px;
+      border: none; display: block;
     }
 
     @media (max-width: 639px) {
@@ -429,35 +511,74 @@
     #map { background: var(--white); }
 
     .map-box {
-      margin-top: 2rem;
-      background: var(--cream);
+      margin-top: 2rem; background: var(--cream);
       border: 1px solid rgba(78,48,32,.09);
       border-radius: 1.25rem; overflow: hidden;
       box-shadow: 0 4px 20px rgba(78,48,32,.08);
     }
 
-    .map-svg { width: 100%; height: auto; display: block; }
-
-    .map-legend {
-      display: flex; flex-wrap: wrap;
-      gap: .6rem 1.4rem; padding: 1rem 1.25rem;
-      border-top: 1px solid rgba(78,48,32,.07);
+    /* ── Live clocks ── */
+    .clock-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+      border-top: 1px solid rgba(78,48,32,.09);
     }
 
-    .li {
-      display: flex; align-items: center; gap: .4rem;
-      font-size: .73rem; color: var(--soft); font-weight: 500;
+    .clock-card {
+      padding: 1.1rem 1.25rem;
+      border-right: 1px solid rgba(78,48,32,.07);
+      border-bottom: 1px solid rgba(78,48,32,.07);
     }
 
-    .ldot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .clock-card:nth-child(2n) { border-right: none; }
+    .clock-card:nth-last-child(-n+2) { border-bottom: none; }
+
+    .clock-who {
+      font-size: .72rem; font-weight: 600;
+      color: var(--warm); margin-bottom: .1rem;
+    }
+
+    .clock-city {
+      font-size: .68rem; color: var(--soft);
+      margin-bottom: .5rem;
+    }
+
+    .clock-time {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 700;
+      color: var(--warm); line-height: 1;
+      letter-spacing: .02em;
+    }
+
+    .clock-date {
+      font-size: .68rem; color: var(--soft);
+      margin-top: .2rem;
+    }
+
+    .clock-tz {
+      font-size: .6rem; color: rgba(138,112,96,.55);
+      margin-top: .25rem; letter-spacing: .04em;
+    }
+
+    /* Day indicator — dim if night time */
+    .clock-card.is-night .clock-time { color: var(--soft); }
+    .clock-card.is-night .clock-who  { opacity: .7; }
+
+    @media (min-width: 640px) {
+      .clock-grid { grid-template-columns: repeat(4, 1fr); }
+      .clock-card:nth-child(2n) { border-right: 1px solid rgba(78,48,32,.07); }
+      .clock-card:nth-child(4n) { border-right: none; }
+      .clock-card:nth-last-child(-n+2) { border-bottom: 1px solid rgba(78,48,32,.07); }
+      .clock-card:nth-last-child(-n+4) { border-bottom: none; }
+    }
 
     /* ══════════════ NOTIFICATIONS ══════════════ */
     #notify { background: #e6ede6; }
     #notify .eyebrow { color: #3d6b42; }
 
     .notify-grid {
-      display: grid;
-      grid-template-columns: 1fr;
+      display: grid; grid-template-columns: 1fr;
       gap: 1rem; margin-top: 2rem;
     }
 
@@ -509,15 +630,24 @@
     #setup .intro { color: rgba(255,255,255,.6); }
     #setup .rule { background: var(--gold); }
 
-    #setup .step {
+    .steps { display: flex; flex-direction: column; gap: .9rem; margin-top: 2rem; }
+
+    .step {
+      display: flex; gap: 1rem; align-items: flex-start;
       background: rgba(255,255,255,.07);
       border: 1px solid rgba(255,255,255,.1);
+      border-radius: 1rem; padding: 1.25rem 1.1rem;
     }
 
-    #setup .step .sn { color: var(--gold); }
-    #setup .step h4 { color: white; }
-    #setup .step p  { color: rgba(255,255,255,.58); }
-    #setup .step p code { background: rgba(201,147,56,.22); color: var(--gold); }
+    .sn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-style: italic; font-weight: 700;
+      color: var(--gold); line-height: 1; min-width: 2rem;
+    }
+
+    .step h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 700; color: white; margin-bottom: .35rem; }
+    .step p  { font-size: .81rem; color: rgba(255,255,255,.58); line-height: 1.75; }
+    .step p code { background: rgba(201,147,56,.22); color: var(--gold); padding: .1em .4em; border-radius: 4px; font-size: .8em; }
 
     /* ══════════════ FOOTER ══════════════ */
     footer {
@@ -593,6 +723,42 @@
     .fi:focus, .fsel:focus, .fta:focus { border-color: var(--rust); }
     .fta { min-height: 88px; resize: vertical; }
 
+    /* Photo upload zone */
+    .photo-upload-zone {
+      display: block;
+      border: 2px dashed rgba(78,48,32,.2);
+      border-radius: .85rem;
+      background: rgba(78,48,32,.03);
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color .2s, background .2s;
+      min-height: 110px;
+    }
+
+    .photo-upload-zone:hover,
+    .photo-upload-zone:active {
+      border-color: var(--rust);
+      background: rgba(184,85,53,.04);
+    }
+
+    .puz-inner {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.5rem 1rem; gap: .3rem;
+      min-height: 110px;
+    }
+
+    .puz-icon { font-size: 2rem; }
+
+    .puz-text {
+      font-size: .85rem; font-weight: 600;
+      color: var(--warm);
+    }
+
+    .puz-sub {
+      font-size: .72rem; color: var(--soft);
+    }
+
     .ma { display: flex; gap: .65rem; }
 
     /* ══════════════ ANIMATIONS ══════════════ */
@@ -610,15 +776,22 @@
       .nav-links { display: none; }
       .burger    { display: flex; }
       .ma        { flex-direction: column; }
+      .fcard     { min-height: 200px; }
+      .fcard.wide { min-height: 230px; }
     }
 
     @media (min-width: 640px) {
       .burger     { display: none; }
       .nav-drawer { display: none !important; }
       .wall       { columns: 2 260px; }
-      .fgrid      { grid-template-columns: repeat(4, 1fr); }
-      .fcard.wide { grid-column: auto; }
+      .fgrid      { grid-template-columns: repeat(3, 1fr); }
+      .fcard.wide { grid-column: 1 / -1; }
       .notify-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (min-width: 900px) {
+      .fgrid { grid-template-columns: repeat(4, 1fr); }
+      .fcard.wide { grid-column: auto; }
     }
 
     @media (min-width: 1000px) {
@@ -633,18 +806,15 @@
 <div class="hero">
   <div class="ring" style="width:480px;height:480px;"></div>
   <div class="ring" style="width:760px;height:760px;opacity:.45;"></div>
-
   <p class="hero-eyebrow">Private · Family Only</p>
   <h1>Our <em>Family</em><br>Hub</h1>
   <p class="hero-sub">One place for all of us — wherever we are.</p>
-
   <div class="cities">
     <div class="city"><span class="cdot" style="background:#b85535"></span>Amsterdam</div>
     <div class="city"><span class="cdot" style="background:#c99338"></span>Sydney</div>
     <div class="city"><span class="cdot" style="background:#6a8f6e"></span>Urbana-Champaign</div>
     <div class="city"><span class="cdot" style="background:#4e3020"></span>Ann Arbor</div>
   </div>
-
   <div class="scroll-cue">
     <span>Scroll</span>
     <div class="scroll-line"></div>
@@ -685,27 +855,110 @@
     <div class="rule"></div>
 
     <div class="fgrid">
+
+      <!-- DAD & MAMA — Amsterdam -->
       <div class="fcard wide">
-        <div class="av" style="background:linear-gradient(135deg,#b85535,#4e3020);">♥</div>
-        <p class="fn">Dad &amp; Mama</p>
-        <p class="fc">📍 Amsterdam, Netherlands 🇳🇱</p>
+        <div class="fcard-bg" id="bg-dad" style="
+          background-image: url('https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?w=1200&auto=format&fit=crop');
+          background-color: #7a6a8a;
+        "></div>
+        <div class="fcard-overlay"></div>
+        <button class="bg-btn" onclick="document.getElementById('bgi-dad').click()">🖼 Change BG</button>
+        <input type="file" accept="image/*" class="bg-input" id="bgi-dad" onchange="changeBg('bg-dad',this)">
+        <div class="fcard-body">
+          <div class="profile-wrap" onclick="document.getElementById('pi-dad').click()">
+            <div class="profile-circle" id="pc-dad" style="background: linear-gradient(135deg,#b85535,#4e3020);">
+              <span class="initials">♥</span>
+              <img id="pp-dad" alt="Dad & Mama" />
+              <div class="cam-label">📷 Add<br>Photo</div>
+            </div>
+            <input type="file" accept="image/*" class="profile-input" id="pi-dad" onchange="changeProfile('pp-dad','pc-dad',this)">
+          </div>
+          <div class="fcard-info">
+            <p class="fn">Dad &amp; Mama</p>
+            <p class="fc">📍 Amsterdam, Netherlands 🇳🇱</p>
+          </div>
+        </div>
       </div>
+
+      <!-- VINCENT — Sydney -->
       <div class="fcard">
-        <div class="av" style="background:#c99338;">V</div>
-        <p class="fn">Vincent</p>
-        <p class="fc">📍 Sydney 🇦🇺</p>
+        <div class="fcard-bg" id="bg-vincent" style="
+          background-image: url('https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=900&auto=format&fit=crop');
+          background-color: #4a7a9a;
+        "></div>
+        <div class="fcard-overlay"></div>
+        <button class="bg-btn" onclick="document.getElementById('bgi-vincent').click()">🖼 Change BG</button>
+        <input type="file" accept="image/*" class="bg-input" id="bgi-vincent" onchange="changeBg('bg-vincent',this)">
+        <div class="fcard-body">
+          <div class="profile-wrap" onclick="document.getElementById('pi-vincent').click()">
+            <div class="profile-circle" id="pc-vincent" style="background: #c99338;">
+              <span class="initials">V</span>
+              <img id="pp-vincent" alt="Vincent" />
+              <div class="cam-label">📷 Add<br>Photo</div>
+            </div>
+            <input type="file" accept="image/*" class="profile-input" id="pi-vincent" onchange="changeProfile('pp-vincent','pc-vincent',this)">
+          </div>
+          <div class="fcard-info">
+            <p class="fn">Vincent</p>
+            <p class="fc">📍 Sydney, Australia 🇦🇺</p>
+          </div>
+        </div>
       </div>
+
+      <!-- DANIEL — U of Illinois -->
       <div class="fcard">
-        <div class="av" style="background:#6a8f6e;">D</div>
-        <p class="fn">Daniel</p>
-        <p class="fc">📍 Urbana-Champaign 🇺🇸</p>
+        <div class="fcard-bg" id="bg-daniel" style="
+          background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=900&auto=format&fit=crop');
+          background-color: #3d6b42;
+        "></div>
+        <div class="fcard-overlay"></div>
+        <button class="bg-btn" onclick="document.getElementById('bgi-daniel').click()">🖼 Change BG</button>
+        <input type="file" accept="image/*" class="bg-input" id="bgi-daniel" onchange="changeBg('bg-daniel',this)">
+        <div class="fcard-body">
+          <div class="profile-wrap" onclick="document.getElementById('pi-daniel').click()">
+            <div class="profile-circle" id="pc-daniel" style="background: #6a8f6e;">
+              <span class="initials">D</span>
+              <img id="pp-daniel" alt="Daniel" />
+              <div class="cam-label">📷 Add<br>Photo</div>
+            </div>
+            <input type="file" accept="image/*" class="profile-input" id="pi-daniel" onchange="changeProfile('pp-daniel','pc-daniel',this)">
+          </div>
+          <div class="fcard-info">
+            <p class="fn">Daniel</p>
+            <p class="fc">📍 Urbana-Champaign, IL 🇺🇸</p>
+          </div>
+        </div>
       </div>
+
+      <!-- JACOB — U of Michigan -->
       <div class="fcard">
-        <div class="av" style="background:#4e3020;">J</div>
-        <p class="fn">Jacob</p>
-        <p class="fc">📍 Ann Arbor 🇺🇸</p>
+        <div class="fcard-bg" id="bg-jacob" style="
+          background-image: url('https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=900&auto=format&fit=crop');
+          background-color: #00274c;
+        "></div>
+        <div class="fcard-overlay"></div>
+        <button class="bg-btn" onclick="document.getElementById('bgi-jacob').click()">🖼 Change BG</button>
+        <input type="file" accept="image/*" class="bg-input" id="bgi-jacob" onchange="changeBg('bg-jacob',this)">
+        <div class="fcard-body">
+          <div class="profile-wrap" onclick="document.getElementById('pi-jacob').click()">
+            <div class="profile-circle" id="pc-jacob" style="background: #00274c;">
+              <span class="initials">J</span>
+              <img id="pp-jacob" alt="Jacob" />
+              <div class="cam-label">📷 Add<br>Photo</div>
+            </div>
+            <input type="file" accept="image/*" class="profile-input" id="pi-jacob" onchange="changeProfile('pp-jacob','pc-jacob',this)">
+          </div>
+          <div class="fcard-info">
+            <p class="fn">Jacob</p>
+            <p class="fc">📍 Ann Arbor, MI 🇺🇸</p>
+          </div>
+        </div>
       </div>
+
     </div>
+
+    <p class="photo-tip">💡 Tap the circle to add a profile photo &nbsp;·&nbsp; Tap "Change BG" to swap the background with any photo from your phone</p>
   </div>
 </section>
 
@@ -716,7 +969,6 @@
     <h2 class="sec-title">Family Calendar</h2>
     <div class="rule"></div>
     <p class="intro">Our shared family calendar — completely separate from anyone's personal Gmail. Everyone can view and add events from their own phone.</p>
-
     <div class="cal-box">
       <div class="cal-bar">
         <h3>📅 Our Shared Calendar</h3>
@@ -735,8 +987,7 @@
     <p class="eyebrow">Share Anything</p>
     <h2 class="sec-title">Family Noticeboard</h2>
     <div class="rule"></div>
-    <p class="intro">Photos, ideas, recipes, news, funny stuff. Post it here for everyone to see. Scroll through everything or filter by type.</p>
-
+    <p class="intro">Photos, ideas, recipes, news, funny stuff. Post it here for everyone to see.</p>
     <div class="tabs">
       <button class="tab active" onclick="filterPosts('all',this)">All</button>
       <button class="tab" onclick="filterPosts('photo',this)">📸 Photos</button>
@@ -744,7 +995,6 @@
       <button class="tab" onclick="filterPosts('recipe',this)">🍳 Recipes</button>
       <button class="tab" onclick="filterPosts('news',this)">📰 News</button>
     </div>
-
     <div class="wall" id="wall">
       <div class="post" data-cat="photo">
         <div class="post-emo" style="height:150px;">🌆</div>
@@ -755,7 +1005,6 @@
         </div>
         <div class="post-foot"><span class="post-from">Vincent</span><span>Sydney</span></div>
       </div>
-
       <div class="post" data-cat="idea">
         <div class="post-body">
           <p class="post-tag" style="color:#b85535;">💡 Idea</p>
@@ -764,7 +1013,6 @@
         </div>
         <div class="post-foot"><span class="post-from">Dad</span><span>Amsterdam</span></div>
       </div>
-
       <div class="post" data-cat="recipe">
         <div class="post-emo" style="height:120px;">🍝</div>
         <div class="post-body">
@@ -774,7 +1022,6 @@
         </div>
         <div class="post-foot"><span class="post-from">Mama</span><span>Amsterdam</span></div>
       </div>
-
       <div class="post" data-cat="news">
         <div class="post-body">
           <p class="post-tag" style="color:#4e3020;">📰 News</p>
@@ -783,7 +1030,6 @@
         </div>
         <div class="post-foot"><span class="post-from">Jacob</span><span>Ann Arbor</span></div>
       </div>
-
       <div class="post" data-cat="photo">
         <div class="post-emo" style="height:130px;">🌨️</div>
         <div class="post-body">
@@ -793,7 +1039,6 @@
         </div>
         <div class="post-foot"><span class="post-from">Daniel</span><span>Urbana-Champaign</span></div>
       </div>
-
       <div class="post" data-cat="idea">
         <div class="post-body">
           <p class="post-tag" style="color:#b85535;">💡 Idea</p>
@@ -803,7 +1048,6 @@
         <div class="post-foot"><span class="post-from">Mama</span><span>Amsterdam</span></div>
       </div>
     </div>
-
     <button class="add-btn" onclick="openSheet()">＋ Add Something to the Board</button>
   </div>
 </section>
@@ -814,45 +1058,249 @@
     <p class="eyebrow">Across the World</p>
     <h2 class="sec-title">Where We Are</h2>
     <div class="rule"></div>
-    <p class="intro">Five of us across four cities and three continents. Quite the time zones to navigate.</p>
-
+    <p class="intro">Five of us across four cities and three continents — and four very different time zones.</p>
     <div class="map-box">
-      <svg class="map-svg" viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg">
-        <rect width="900" height="460" fill="#d8edf5"/>
-        <path d="M105,72 L200,62 L246,86 L263,126 L253,176 L223,218 L203,256 L183,276 L163,266 L143,236 L123,196 L103,156 L93,116 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
-        <path d="M183,276 L219,271 L239,306 L245,356 L229,396 L209,416 L189,406 L173,366 L169,326 L174,291 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
-        <path d="M386,52 L446,47 L466,70 L456,106 L423,116 L399,106 L383,86 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
-        <path d="M396,126 L453,120 L473,156 L468,216 L453,266 L423,286 L397,266 L379,216 L375,166 L385,136 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
-        <path d="M459,47 L606,37 L683,62 L704,105 L683,145 L643,165 L593,155 L543,145 L491,133 L459,105 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
-        <path d="M649,272 L723,262 L763,289 L768,335 L743,365 L703,370 L668,349 L647,315 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
 
-        <line x1="416" y1="78" x2="721" y2="335" stroke="#b85535" stroke-width="1.3" stroke-dasharray="7,5" opacity=".3"/>
-        <line x1="416" y1="78" x2="173" y2="154" stroke="#6a8f6e" stroke-width="1.3" stroke-dasharray="7,5" opacity=".3"/>
-        <line x1="416" y1="78" x2="191" y2="139" stroke="#4e3020" stroke-width="1.3" stroke-dasharray="7,5" opacity=".3"/>
-        <line x1="173" y1="154" x2="191" y2="139" stroke="#c99338" stroke-width="1" stroke-dasharray="5,4" opacity=".25"/>
+      <!-- Detailed static SVG world map -->
+      <svg class="map-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;border-radius:1.25rem 1.25rem 0 0;">
+        <defs>
+          <filter id="pin-shadow">
+            <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.4)"/>
+          </filter>
+          <filter id="line-glow">
+            <feGaussianBlur stdDeviation="1" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
 
-        <circle cx="416" cy="78" r="13" fill="#b85535" stroke="white" stroke-width="2.5"/>
-        <text x="416" y="83" text-anchor="middle" fill="white" font-size="10" font-family="DM Sans,sans-serif">♥</text>
-        <text x="416" y="61" text-anchor="middle" fill="#b85535" font-size="10" font-weight="600" font-family="DM Sans,sans-serif">Amsterdam</text>
+        <!-- Ocean -->
+        <rect width="1000" height="500" fill="#c8dff0"/>
 
-        <circle cx="721" cy="335" r="13" fill="#c99338" stroke="white" stroke-width="2.5"/>
-        <text x="721" y="340" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">V</text>
-        <text x="721" y="318" text-anchor="middle" fill="#c99338" font-size="10" font-weight="600" font-family="DM Sans,sans-serif">Sydney</text>
+        <!-- Graticule (lat/lon grid lines) -->
+        <g stroke="#a8c8e0" stroke-width="0.4" opacity="0.5">
+          <!-- Longitude lines every 30° -->
+          <line x1="139" y1="0" x2="139" y2="500"/>
+          <line x1="194" y1="0" x2="194" y2="500"/>
+          <line x1="250" y1="0" x2="250" y2="500"/>
+          <line x1="306" y1="0" x2="306" y2="500"/>
+          <line x1="361" y1="0" x2="361" y2="500"/>
+          <line x1="417" y1="0" x2="417" y2="500"/>
+          <line x1="472" y1="0" x2="472" y2="500"/>
+          <line x1="528" y1="0" x2="528" y2="500"/>
+          <line x1="583" y1="0" x2="583" y2="500"/>
+          <line x1="639" y1="0" x2="639" y2="500"/>
+          <line x1="694" y1="0" x2="694" y2="500"/>
+          <line x1="750" y1="0" x2="750" y2="500"/>
+          <line x1="806" y1="0" x2="806" y2="500"/>
+          <line x1="861" y1="0" x2="861" y2="500"/>
+          <!-- Latitude lines every 30° -->
+          <line x1="0" y1="42" x2="1000" y2="42"/>
+          <line x1="0" y1="125" x2="1000" y2="125"/>
+          <line x1="0" y1="208" x2="1000" y2="208"/>
+          <line x1="0" y1="250" x2="1000" y2="250"/>
+          <line x1="0" y1="292" x2="1000" y2="292"/>
+          <line x1="0" y1="375" x2="1000" y2="375"/>
+          <line x1="0" y1="458" x2="1000" y2="458"/>
+        </g>
+        <!-- Equator -->
+        <line x1="0" y1="250" x2="1000" y2="250" stroke="#a8c8e0" stroke-width="0.9" opacity="0.8"/>
 
-        <circle cx="173" cy="154" r="13" fill="#6a8f6e" stroke="white" stroke-width="2.5"/>
-        <text x="173" y="159" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">D</text>
-        <text x="173" y="137" text-anchor="middle" fill="#6a8f6e" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">U-C, IL</text>
+        <!-- ═══════════════════════════════
+             CONTINENTS — proper shapes
+             Using Mercator-like projection:
+             x = (lng + 180) * (1000/360)
+             y = (90 - lat) * (500/180)
+        ═══════════════════════════════ -->
 
-        <circle cx="191" cy="139" r="13" fill="#4e3020" stroke="white" stroke-width="2.5"/>
-        <text x="191" y="144" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">J</text>
-        <text x="228" y="136" text-anchor="start" fill="#4e3020" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">Ann Arbor</text>
+        <!-- GREENLAND -->
+        <path d="M305,18 L340,15 L365,22 L378,35 L372,52 L355,62 L335,68 L312,60 L298,45 L300,30 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.8"/>
+
+        <!-- ICELAND -->
+        <path d="M393,72 L410,68 L422,74 L418,84 L402,88 L390,82 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+
+        <!-- CANADA + USA -->
+        <path d="M85,55 L180,45 L240,52 L280,70 L295,90 L288,115 L270,130 L260,155 L240,168 L215,172 L195,180 L175,188 L158,195 L140,200 L118,198 L100,190 L82,178 L70,160 L65,138 L68,115 L72,95 L78,75 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.8"/>
+        <!-- Alaska -->
+        <path d="M35,65 L72,58 L85,65 L80,85 L60,95 L38,90 L28,78 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+        <!-- Florida peninsula -->
+        <path d="M215,172 L222,185 L218,200 L210,205 L205,195 L208,180 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+        <!-- Baja California -->
+        <path d="M100,185 L108,195 L105,218 L98,225 L92,215 L94,198 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- MEXICO + CENTRAL AMERICA -->
+        <path d="M100,190 L155,195 L170,205 L175,220 L165,235 L150,240 L138,248 L128,255 L118,250 L112,238 L108,220 L103,205 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+
+        <!-- CUBA + CARIBBEAN -->
+        <path d="M195,210 L218,208 L228,214 L222,220 L205,222 L192,216 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+        <path d="M232,218 L242,216 L245,222 L238,226 L230,222 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.5"/>
+
+        <!-- COLOMBIA + VENEZUELA -->
+        <path d="M155,255 L195,248 L225,252 L238,262 L235,278 L220,285 L200,282 L180,275 L162,268 L155,260 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+
+        <!-- SOUTH AMERICA -->
+        <path d="M148,260 L195,248 L240,258 L265,268 L278,285 L285,310 L280,340 L270,368 L255,395 L238,415 L220,428 L205,430 L190,422 L178,405 L168,382 L160,355 L155,325 L152,298 L148,275 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.8"/>
+
+        <!-- UK + IRELAND -->
+        <path d="M438,98 L448,92 L458,96 L462,108 L455,118 L444,120 L436,112 L436,104 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+        <path d="M428,104 L436,100 L438,112 L432,116 L426,110 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- NORWAY + SCANDINAVIA -->
+        <path d="M468,62 L490,55 L510,58 L522,70 L518,88 L505,100 L490,108 L475,105 L464,95 L462,80 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+        <!-- Sweden/Finland -->
+        <path d="M490,58 L530,52 L555,62 L558,82 L545,100 L525,110 L508,105 L495,95 L490,78 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+
+        <!-- EUROPE (main body) -->
+        <path d="M438,112 L462,108 L500,108 L535,112 L558,118 L572,130 L568,148 L555,158 L538,162 L518,168 L500,172 L482,175 L465,170 L450,162 L438,150 L432,138 L432,125 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.8"/>
+        <!-- Iberian peninsula -->
+        <path d="M432,148 L460,152 L472,165 L468,182 L452,192 L435,188 L424,175 L425,162 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+        <!-- Italy -->
+        <path d="M490,155 L505,150 L518,158 L520,172 L512,188 L500,198 L490,192 L485,178 L485,165 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+        <!-- Greece -->
+        <path d="M540,168 L558,165 L565,175 L560,188 L545,192 L535,182 L535,172 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- AFRICA -->
+        <path d="M448,195 L492,188 L530,192 L558,200 L575,218 L582,242 L585,268 L582,295 L575,320 L562,348 L545,372 L525,392 L505,405 L485,408 L465,402 L448,385 L435,362 L428,335 L425,308 L425,282 L428,258 L432,235 L438,215 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.8"/>
+        <!-- Madagascar -->
+        <path d="M582,308 L594,298 L600,315 L598,338 L590,348 L580,338 L578,320 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- MIDDLE EAST / ARABIAN PENINSULA -->
+        <path d="M560,170 L610,168 L638,178 L645,198 L640,222 L625,238 L605,245 L585,240 L568,228 L562,210 L558,192 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+
+        <!-- RUSSIA -->
+        <path d="M555,52 L640,42 L720,38 L800,42 L868,50 L895,62 L900,80 L885,95 L858,105 L820,112 L782,115 L745,118 L705,120 L668,118 L635,115 L600,112 L568,108 L548,98 L542,82 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.8"/>
+
+        <!-- KAZAKHSTAN + CENTRAL ASIA -->
+        <path d="M568,118 L635,118 L668,122 L680,138 L672,155 L648,162 L618,162 L590,155 L572,142 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+
+        <!-- IRAN + AFGHANISTAN + PAKISTAN -->
+        <path d="M592,168 L640,162 L678,165 L698,178 L702,198 L690,215 L668,222 L642,220 L618,212 L600,198 L594,182 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+
+        <!-- INDIA -->
+        <path d="M645,175 L690,172 L715,182 L725,202 L722,228 L712,252 L695,270 L678,278 L662,272 L650,252 L642,228 L638,205 L640,185 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.8"/>
+        <!-- Sri Lanka -->
+        <path d="M688,282 L696,278 L700,288 L694,295 L686,290 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.5"/>
+
+        <!-- CHINA -->
+        <path d="M680,118 L748,112 L800,118 L832,130 L845,150 L840,172 L822,188 L798,198 L770,202 L742,198 L718,188 L700,172 L688,155 L682,138 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.8"/>
+
+        <!-- SOUTH EAST ASIA (mainland) -->
+        <path d="M730,195 L768,192 L795,202 L805,218 L798,238 L782,248 L762,252 L742,245 L728,232 L722,215 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.7"/>
+        <!-- Thailand/Myanmar peninsula -->
+        <path d="M762,248 L772,258 L775,278 L770,295 L760,300 L752,288 L752,268 L756,252 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- KOREA + JAPAN -->
+        <path d="M800,138 L818,132 L828,142 L822,155 L808,160 L798,152 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+        <!-- Japan -->
+        <path d="M832,128 L848,120 L858,128 L855,142 L842,148 L832,140 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+        <path d="M845,145 L858,138 L868,145 L865,158 L852,162 L842,155 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- INDONESIA (main islands) -->
+        <path d="M762,295 L802,288 L825,292 L830,305 L815,312 L788,315 L762,308 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+        <path d="M832,298 L868,292 L885,300 L882,315 L860,320 L838,312 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+        <path d="M820,318 L855,312 L875,322 L870,338 L848,342 L825,332 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- PHILIPPINES -->
+        <path d="M820,225 L835,218 L845,228 L840,245 L828,250 L818,240 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- NEW ZEALAND -->
+        <path d="M918,368 L928,358 L935,368 L932,385 L922,390 L915,380 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+        <path d="M925,390 L938,382 L945,392 L940,408 L928,412 L920,402 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- AUSTRALIA — detailed outline -->
+        <path d="M790,320 L825,308 L858,312 L888,325 L912,345 L928,368 L932,395 L925,422 L908,442 L882,455 L852,460 L820,455 L792,442 L770,422 L758,398 L755,372 L762,348 L775,332 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.9"/>
+        <!-- Cape York peninsula -->
+        <path d="M870,312 L885,298 L892,308 L885,322 L872,322 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+        <!-- Tasmania -->
+        <path d="M832,462 L845,458 L850,470 L840,478 L828,472 Z" fill="#d4c9b4" stroke="#b8a898" stroke-width="0.6"/>
+
+        <!-- ANTARCTICA (partial) -->
+        <path d="M0,492 L200,485 L400,488 L600,485 L800,488 L1000,492 L1000,500 L0,500 Z" fill="#e8e8e8" stroke="#d0d0d0" stroke-width="0.5"/>
+
+        <!-- ═══════════════════════════════
+             DASHED CONNECTION LINES
+        ═══════════════════════════════ -->
+        <!-- Amsterdam to Sydney -->
+        <path d="M 476,136 Q 680,50 855,348" stroke="#b85535" stroke-width="1.5" stroke-dasharray="7,5" fill="none" opacity="0.4"/>
+        <!-- Amsterdam to Urbana-Champaign -->
+        <path d="M 476,136 Q 360,80 245,194" stroke="#6a8f6e" stroke-width="1.5" stroke-dasharray="7,5" fill="none" opacity="0.4"/>
+        <!-- Amsterdam to Ann Arbor -->
+        <path d="M 476,136 Q 380,85 259,188" stroke="#4e3020" stroke-width="1.5" stroke-dasharray="7,5" fill="none" opacity="0.4"/>
+        <!-- Daniel to Jacob (short line) -->
+        <line x1="245" y1="194" x2="259" y2="188" stroke="#c99338" stroke-width="1" stroke-dasharray="4,4" opacity="0.35"/>
+
+        <!-- ═══════════════════════════════
+             FAMILY PINS
+             Mercator coords:
+             Amsterdam:        52.37N,  4.90E  → x=476, y=136
+             Sydney:          -33.87S,151.21E  → x=855, y=344
+             Urbana-Champaign: 40.11N, 88.20W  → x=245, y=194
+             Ann Arbor:        42.28N, 83.75W  → x=259, y=188
+        ═══════════════════════════════ -->
+
+        <!-- Amsterdam — Dad & Mama -->
+        <g filter="url(#pin-shadow)">
+          <circle cx="476" cy="136" r="14" fill="#b85535" stroke="white" stroke-width="2.5"/>
+          <text x="476" y="141" text-anchor="middle" fill="white" font-size="11" font-family="DM Sans,sans-serif" font-weight="700">♥</text>
+        </g>
+        <rect x="452" y="114" width="48" height="16" rx="4" fill="rgba(184,85,53,0.88)"/>
+        <text x="476" y="125" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">Amsterdam</text>
+
+        <!-- Sydney — Vincent -->
+        <g filter="url(#pin-shadow)">
+          <circle cx="855" cy="348" r="14" fill="#c99338" stroke="white" stroke-width="2.5"/>
+          <text x="855" y="353" text-anchor="middle" fill="white" font-size="12" font-family="DM Sans,sans-serif" font-weight="700">V</text>
+        </g>
+        <rect x="836" y="326" width="40" height="16" rx="4" fill="rgba(201,147,56,0.88)"/>
+        <text x="856" y="337" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">Sydney</text>
+
+        <!-- Urbana-Champaign — Daniel -->
+        <g filter="url(#pin-shadow)">
+          <circle cx="245" cy="194" r="14" fill="#6a8f6e" stroke="white" stroke-width="2.5"/>
+          <text x="245" y="199" text-anchor="middle" fill="white" font-size="12" font-family="DM Sans,sans-serif" font-weight="700">D</text>
+        </g>
+        <rect x="218" y="172" width="56" height="16" rx="4" fill="rgba(106,143,110,0.88)"/>
+        <text x="246" y="183" text-anchor="middle" fill="white" font-size="8.5" font-weight="600" font-family="DM Sans,sans-serif">Urbana-Champ.</text>
+
+        <!-- Ann Arbor — Jacob -->
+        <g filter="url(#pin-shadow)">
+          <circle cx="261" cy="182" r="14" fill="#4e3020" stroke="white" stroke-width="2.5"/>
+          <text x="261" y="187" text-anchor="middle" fill="white" font-size="12" font-family="DM Sans,sans-serif" font-weight="700">J</text>
+        </g>
+        <rect x="238" y="160" width="50" height="16" rx="4" fill="rgba(78,48,32,0.88)"/>
+        <text x="263" y="171" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">Ann Arbor</text>
+
       </svg>
 
-      <div class="map-legend">
-        <div class="li"><span class="ldot" style="background:#b85535"></span>Dad &amp; Mama — Amsterdam</div>
-        <div class="li"><span class="ldot" style="background:#c99338"></span>Vincent — Sydney</div>
-        <div class="li"><span class="ldot" style="background:#6a8f6e"></span>Daniel — Urbana-Champaign</div>
-        <div class="li"><span class="ldot" style="background:#4e3020"></span>Jacob — Ann Arbor</div>
+      <!-- Live clocks -->
+      <div class="clock-grid">
+        <div class="clock-card" style="border-top: 3px solid #b85535;">
+          <div class="clock-who">❤️ Dad &amp; Mama</div>
+          <div class="clock-city">Amsterdam</div>
+          <div class="clock-time" id="clk-amsterdam">--:--</div>
+          <div class="clock-date" id="clk-amsterdam-date"></div>
+          <div class="clock-tz">Europe/Amsterdam</div>
+        </div>
+        <div class="clock-card" style="border-top: 3px solid #c99338;">
+          <div class="clock-who">Vincent</div>
+          <div class="clock-city">Sydney</div>
+          <div class="clock-time" id="clk-sydney">--:--</div>
+          <div class="clock-date" id="clk-sydney-date"></div>
+          <div class="clock-tz">Australia/Sydney</div>
+        </div>
+        <div class="clock-card" style="border-top: 3px solid #6a8f6e;">
+          <div class="clock-who">Daniel</div>
+          <div class="clock-city">Urbana-Champaign</div>
+          <div class="clock-time" id="clk-chicago">--:--</div>
+          <div class="clock-date" id="clk-chicago-date"></div>
+          <div class="clock-tz">America/Chicago</div>
+        </div>
+        <div class="clock-card" style="border-top: 3px solid #4e3020;">
+          <div class="clock-who">Jacob</div>
+          <div class="clock-city">Ann Arbor</div>
+          <div class="clock-time" id="clk-detroit">--:--</div>
+          <div class="clock-date" id="clk-detroit-date"></div>
+          <div class="clock-tz">America/Detroit</div>
+        </div>
       </div>
     </div>
   </div>
@@ -864,57 +1312,45 @@
     <p class="eyebrow">Stay in the Loop</p>
     <h2 class="sec-title">Family Notifications</h2>
     <div class="rule"></div>
-    <p class="intro">Three ways to make sure the whole family gets a nudge on their phone whenever something important happens — no new apps needed.</p>
-
+    <p class="intro">Three ways to make sure the whole family gets a nudge on their phone whenever something important happens.</p>
     <div class="notify-grid">
-
       <div class="notify-card">
         <span class="notify-icon">📧</span>
         <h3>Family Group Email</h3>
-        <p>One email address that reaches everyone at once. Send it and all five of you get it in your Gmail inbox — which pops up on iPhone just like a text.</p>
+        <p>One email address that reaches everyone at once. Lands in Gmail inbox — which pops up on iPhone just like a text.</p>
         <div class="notify-steps">
-          <div class="nstep"><div class="nnum">1</div>Go to <strong>groups.google.com</strong> → click <strong>"Create group"</strong> → name it <em>Our Family</em> and pick an address like <em>ourfamily@googlegroups.com</em>.</div>
-          <div class="nstep"><div class="nnum">2</div>Click <strong>People → Members → Add members</strong> → add Mama, Vincent, Daniel and Jacob's Gmail addresses. They each get an invite to tap Accept.</div>
-          <div class="nstep"><div class="nnum">3</div>Done! Now email that one address whenever you want to reach everyone at once.</div>
+          <div class="nstep"><div class="nnum">1</div>Go to <strong>groups.google.com</strong> → <strong>"Create group"</strong> → name it <em>Our Family.</em></div>
+          <div class="nstep"><div class="nnum">2</div>Add everyone's Gmail addresses. They each tap Accept.</div>
+          <div class="nstep"><div class="nnum">3</div>Done! One email reaches everyone instantly.</div>
         </div>
-        <div style="margin-top:1.1rem;">
-          <a class="btn btn-rust" href="https://groups.google.com/my-groups" target="_blank">Set Up Group →</a>
-        </div>
+        <div style="margin-top:1.1rem;"><a class="btn btn-rust" href="https://groups.google.com/my-groups" target="_blank">Set Up Group →</a></div>
       </div>
-
       <div class="notify-card">
         <span class="notify-icon">📅</span>
         <h3>Calendar Reminders</h3>
-        <p>Google automatically emails everyone when a new event is added or coming up. Nothing extra to set up — it's built into the shared calendar.</p>
+        <p>Google automatically emails everyone when a new event is added or coming up. Built in — nothing extra needed.</p>
         <div class="notify-steps">
-          <div class="nstep"><div class="nnum">1</div>The Family Calendar above is already set up — reminders are on by default.</div>
-          <div class="nstep"><div class="nnum">2</div>Each person can go to <strong>Google Calendar → Settings → Notifications</strong> to choose how far in advance they want reminders.</div>
-          <div class="nstep"><div class="nnum">3</div>Reminders land in Gmail and show as iPhone notifications automatically.</div>
+          <div class="nstep"><div class="nnum">1</div>The Family Calendar above is already active.</div>
+          <div class="nstep"><div class="nnum">2</div>Adjust timing in <strong>Google Calendar → Settings → Notifications.</strong></div>
+          <div class="nstep"><div class="nnum">3</div>Reminders show as iPhone notifications automatically.</div>
         </div>
-        <div style="margin-top:1.1rem;">
-          <a class="btn btn-rust" href="https://calendar.google.com/calendar/r/settings" target="_blank">Calendar Settings →</a>
-        </div>
+        <div style="margin-top:1.1rem;"><a class="btn btn-rust" href="https://calendar.google.com/calendar/r/settings" target="_blank">Calendar Settings →</a></div>
       </div>
-
       <div class="notify-card">
         <span class="notify-icon">📱</span>
         <h3>Add Site to Home Screen</h3>
-        <p>Save this site to your iPhone home screen so it opens like an app — one tap and you're on the Family Hub. Do this on every family phone.</p>
+        <p>Save the Family Hub to your iPhone home screen so it opens like an app with one tap.</p>
         <div class="notify-steps">
-          <div class="nstep"><div class="nnum">1</div>Open the Family Hub link in <strong>Safari</strong> on your iPhone (must be Safari, not Chrome).</div>
-          <div class="nstep"><div class="nnum">2</div>Tap the <strong>share button</strong> (box with arrow ↑) at the bottom of the screen.</div>
-          <div class="nstep"><div class="nnum">3</div>Scroll down and tap <strong>"Add to Home Screen"</strong> → tap <strong>Add.</strong> The site icon now lives on your home screen!</div>
+          <div class="nstep"><div class="nnum">1</div>Open the site in <strong>Safari</strong> on iPhone.</div>
+          <div class="nstep"><div class="nnum">2</div>Tap the <strong>share button ↑</strong> at the bottom.</div>
+          <div class="nstep"><div class="nnum">3</div>Tap <strong>"Add to Home Screen"</strong> → <strong>Add.</strong></div>
         </div>
-        <div style="margin-top:1.1rem;">
-          <span class="btn btn-rust" style="opacity:.5;cursor:default;">Do this in Safari on iPhone</span>
-        </div>
+        <div style="margin-top:1.1rem;"><span class="btn btn-rust" style="opacity:.5;cursor:default;">Do this in Safari on iPhone</span></div>
       </div>
-
     </div>
-
     <div class="tip-box">
-      <strong style="color:var(--warm);">💡 Make sure Gmail notifications are on:</strong>
-      On each iPhone go to <strong>Settings → Notifications → Gmail</strong> and make sure <strong>"Allow Notifications"</strong> is switched on. This is what makes family emails and calendar reminders pop up on the lock screen.
+      <strong style="color:var(--warm);">💡 Turn on Gmail notifications:</strong>
+      On each iPhone → <strong>Settings → Notifications → Gmail</strong> → switch on <strong>"Allow Notifications."</strong> This makes family emails and calendar reminders pop up on the lock screen.
     </div>
   </div>
 </section>
@@ -925,51 +1361,14 @@
     <p class="eyebrow">Getting This Online</p>
     <h2 class="sec-title">How to Publish on GitHub</h2>
     <div class="rule"></div>
-    <p class="intro">GitHub is a free service where you host this page so everyone in the family can visit it anytime from any phone. No experience needed.</p>
-
+    <p class="intro">GitHub is a free service where you host this page so everyone in the family can visit it anytime from any phone.</p>
     <div class="steps">
-      <div class="step">
-        <div class="sn">1</div>
-        <div>
-          <h4>Create a free GitHub account</h4>
-          <p>Go to <code>github.com</code> → click "Sign up." Use your email, pick a username like <code>ourfamilyhub</code>, and confirm your email.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="sn">2</div>
-        <div>
-          <h4>Create a repository (a project folder)</h4>
-          <p>Click the green <strong>"New"</strong> button. Name it exactly: <code>yourusername.github.io</code>. Tick <strong>"Add a README file"</strong> and click <strong>"Create repository."</strong></p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="sn">3</div>
-        <div>
-          <h4>Upload this file</h4>
-          <p>Click <strong>"Add file" → "Upload files."</strong> Drag your <code>index.html</code> file in. Write "First upload" in the message box and click <strong>"Commit changes."</strong></p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="sn">4</div>
-        <div>
-          <h4>Switch on GitHub Pages</h4>
-          <p>Click <strong>Settings</strong> at the top → find <strong>"Pages"</strong> in the left sidebar → under "Branch" choose <code>main</code> → click <strong>Save.</strong> Wait 2 minutes.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="sn">5</div>
-        <div>
-          <h4>Your site is live! 🎉</h4>
-          <p>Visit <code>https://yourusername.github.io</code> — it's online and free forever. Share that link with the whole family and bookmark it on every phone.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="sn">6</div>
-        <div>
-          <h4>To update the site later</h4>
-          <p>Go to your GitHub repository → click <code>index.html</code> → click the pencil ✏️ icon → make your changes → click <strong>"Commit changes."</strong> The live site updates in under a minute.</p>
-        </div>
-      </div>
+      <div class="step"><div class="sn">1</div><div><h4>Create a free GitHub account</h4><p>Go to <code>github.com</code> → click "Sign up." Pick a username like <code>ourfamilyhub</code> and confirm your email.</p></div></div>
+      <div class="step"><div class="sn">2</div><div><h4>Create a repository</h4><p>Click <strong>"New"</strong>. Name it: <code>yourusername.github.io</code>. Tick <strong>"Add a README file"</strong> → click <strong>"Create repository."</strong></p></div></div>
+      <div class="step"><div class="sn">3</div><div><h4>Upload this file</h4><p>Click <strong>"Add file" → "Upload files."</strong> Drag your <code>index.html</code> in. Write "First upload" and click <strong>"Commit changes."</strong></p></div></div>
+      <div class="step"><div class="sn">4</div><div><h4>Switch on GitHub Pages</h4><p>Click <strong>Settings</strong> → <strong>"Pages"</strong> in the left sidebar → choose <code>main</code> → click <strong>Save.</strong> Wait 2 minutes.</p></div></div>
+      <div class="step"><div class="sn">5</div><div><h4>Your site is live! 🎉</h4><p>Visit <code>https://yourusername.github.io</code> — free forever. Share with the whole family and bookmark on every phone.</p></div></div>
+      <div class="step"><div class="sn">6</div><div><h4>To update the site (easiest way)</h4><p>Go to your repository → click <strong>"Add file" → "Upload files"</strong> → drag the new <code>index.html</code> file onto the page → click <strong>"Commit changes."</strong> GitHub replaces the old file automatically. Done in under a minute!</p></div></div>
     </div>
   </div>
 </section>
@@ -986,22 +1385,17 @@
   <div class="sheet">
     <div class="handle"></div>
     <h3>Add to the Noticeboard</h3>
-
     <div class="fg">
       <label class="fl">Your name</label>
       <select class="fsel" id="pFrom">
         <option value="">Choose…</option>
-        <option>Dad</option>
-        <option>Mama</option>
-        <option>Vincent</option>
-        <option>Daniel</option>
-        <option>Jacob</option>
+        <option>Dad</option><option>Mama</option>
+        <option>Vincent</option><option>Daniel</option><option>Jacob</option>
       </select>
     </div>
-
     <div class="fg">
       <label class="fl">Category</label>
-      <select class="fsel" id="pCat">
+      <select class="fsel" id="pCat" onchange="togglePhotoUpload(this.value)">
         <option value="photo">📸 Photo</option>
         <option value="idea">💡 Idea</option>
         <option value="recipe">🍳 Recipe</option>
@@ -1009,16 +1403,28 @@
       </select>
     </div>
 
+    <!-- Photo upload — visible only when Photo category is selected -->
+    <div class="fg" id="photoUploadField">
+      <label class="fl">Upload Photo</label>
+      <label class="photo-upload-zone" id="photoZone" for="pPhoto">
+        <div class="puz-inner" id="puzInner">
+          <span class="puz-icon">📷</span>
+          <span class="puz-text">Tap to choose a photo</span>
+          <span class="puz-sub">from your camera roll</span>
+        </div>
+        <img id="pPhotoPreview" style="display:none;width:100%;max-height:220px;object-fit:cover;border-radius:.6rem;" />
+        <input type="file" accept="image/*" id="pPhoto" style="display:none;" onchange="previewPhoto(this)" />
+      </label>
+    </div>
+
     <div class="fg">
       <label class="fl">Title</label>
       <input class="fi" id="pTitle" type="text" placeholder="What's this about?" />
     </div>
-
     <div class="fg">
-      <label class="fl">Message</label>
+      <label class="fl">Caption / Message</label>
       <textarea class="fta" id="pText" placeholder="Share something with the family…"></textarea>
     </div>
-
     <div class="ma">
       <button class="btn btn-ghost" onclick="closeSheet()">Cancel</button>
       <button class="btn btn-rust btn-full" onclick="addPost()">Post to Board</button>
@@ -1028,6 +1434,7 @@
 
 <!-- ══════════════════════ JS ══════════════════════ -->
 <script>
+  /* ── Nav ── */
   const burger = document.getElementById('burger');
   const drawer = document.getElementById('drawer');
   burger.addEventListener('click', () => {
@@ -1039,6 +1446,110 @@
     drawer.classList.remove('open');
   }
 
+  /* ── Change card background image ── */
+  function changeBg(bgId, input) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const el = document.getElementById(bgId);
+      el.style.backgroundImage = `url('${e.target.result}')`;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  /* ── Change profile photo ── */
+  function changeProfile(imgId, circleId, input) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById(imgId);
+      const circle = document.getElementById(circleId);
+      img.src = e.target.result;
+      img.style.display = 'block';
+      // Hide the initials span
+      const initials = circle.querySelector('.initials');
+      if (initials) initials.style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  /* ── Live world clocks ── */
+  const clocks = [
+    { tz: 'Europe/Amsterdam',   timeId: 'clk-amsterdam', dateId: 'clk-amsterdam-date', cardId: null },
+    { tz: 'Australia/Sydney',   timeId: 'clk-sydney',    dateId: 'clk-sydney-date',    cardId: null },
+    { tz: 'America/Chicago',    timeId: 'clk-chicago',   dateId: 'clk-chicago-date',   cardId: null },
+    { tz: 'America/Detroit',    timeId: 'clk-detroit',   dateId: 'clk-detroit-date',   cardId: null },
+  ];
+
+  function updateClocks() {
+    const now = new Date();
+    clocks.forEach(c => {
+      const timeEl = document.getElementById(c.timeId);
+      const dateEl = document.getElementById(c.dateId);
+      if (!timeEl) return;
+
+      const timeStr = now.toLocaleTimeString('en-GB', {
+        timeZone: c.tz, hour: '2-digit', minute: '2-digit'
+      });
+
+      const dateStr = now.toLocaleDateString('en-GB', {
+        timeZone: c.tz, weekday: 'short', day: 'numeric', month: 'short'
+      });
+
+      timeEl.textContent = timeStr;
+      dateEl.textContent = dateStr;
+
+      // Dim the card if it's nighttime (9pm–7am)
+      const hour = parseInt(now.toLocaleString('en-GB', { timeZone: c.tz, hour: 'numeric', hour12: false }));
+      const card = timeEl.closest('.clock-card');
+      if (card) {
+        card.classList.toggle('is-night', hour >= 21 || hour < 7);
+        // Add a moon or sun emoji hint
+        const existing = card.querySelector('.time-icon');
+        if (existing) existing.remove();
+        const icon = document.createElement('span');
+        icon.className = 'time-icon';
+        icon.style.cssText = 'font-size:.75rem;margin-left:.35rem;vertical-align:middle;';
+        icon.textContent = (hour >= 21 || hour < 7) ? '🌙' : (hour < 12 ? '🌅' : '☀️');
+        timeEl.appendChild(icon);
+      }
+    });
+  }
+
+  updateClocks();
+  setInterval(updateClocks, 1000);
+  function togglePhotoUpload(cat) {
+    const field = document.getElementById('photoUploadField');
+    field.style.display = cat === 'photo' ? 'flex' : 'none';
+    if (cat !== 'photo') {
+      // clear preview
+      document.getElementById('pPhotoPreview').style.display = 'none';
+      document.getElementById('puzInner').style.display = 'flex';
+      document.getElementById('pPhoto').value = '';
+      window._postPhotoData = null;
+    }
+  }
+
+  /* ── Preview selected photo ── */
+  function previewPhoto(input) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const preview = document.getElementById('pPhotoPreview');
+      const inner   = document.getElementById('puzInner');
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      inner.style.display = 'none';
+      window._postPhotoData = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  /* initialise: show photo upload by default (photo is first option) */
+  window._postPhotoData = null;
+  document.getElementById('photoUploadField').style.display = 'flex';
+
+  /* ── Filter posts ── */
   function filterPosts(cat, btn) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
@@ -1047,11 +1558,18 @@
     });
   }
 
+  /* ── Sheet ── */
   const overlay = document.getElementById('overlay');
-  function openSheet()  { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function openSheet() {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // ensure photo upload shown/hidden correctly on open
+    togglePhotoUpload(document.getElementById('pCat').value);
+  }
   function closeSheet() { overlay.classList.remove('open'); document.body.style.overflow = ''; }
   function bgClose(e)   { if (e.target === overlay) closeSheet(); }
 
+  /* ── Add post ── */
   const clr = { photo:'#c99338', idea:'#b85535', recipe:'#6a8f6e', news:'#4e3020' };
   const lbl = { photo:'📸 Photo', idea:'💡 Idea', recipe:'🍳 Recipe', news:'📰 News' };
   const emo = { photo:'🖼️', idea:'💡', recipe:'🍳', news:'📰' };
@@ -1062,32 +1580,47 @@
     const title = document.getElementById('pTitle').value.trim();
     const text  = document.getElementById('pText').value.trim();
 
-    if (!from || !title || !text) {
-      alert('Please fill in your name, a title, and a message!');
-      return;
+    if (!from || !title) { alert('Please fill in your name and a title!'); return; }
+    if (cat === 'photo' && !window._postPhotoData && !text) {
+      alert('Please add a photo or write a message!'); return;
+    }
+
+    // Build the top image/emoji area
+    let topHTML = '';
+    if (cat === 'photo' && window._postPhotoData) {
+      topHTML = `<img src="${window._postPhotoData}" style="width:100%;max-height:280px;object-fit:cover;display:block;" />`;
+    } else {
+      topHTML = `<div class="post-emo" style="height:100px;">${emo[cat]}</div>`;
     }
 
     const card = document.createElement('div');
-    card.className = 'post';
-    card.dataset.cat = cat;
+    card.className = 'post'; card.dataset.cat = cat;
     card.innerHTML = `
-      <div class="post-emo" style="height:100px;">${emo[cat]}</div>
+      ${topHTML}
       <div class="post-body">
         <p class="post-tag" style="color:${clr[cat]}">${lbl[cat]}</p>
         <p class="post-title">${title}</p>
-        <p class="post-text">${text}</p>
+        ${text ? `<p class="post-text">${text}</p>` : ''}
       </div>
       <div class="post-foot">
         <span class="post-from">${from}</span><span>Just now</span>
       </div>`;
 
     document.getElementById('wall').prepend(card);
+
+    // Reset form
     document.getElementById('pFrom').value  = '';
     document.getElementById('pTitle').value = '';
     document.getElementById('pText').value  = '';
+    document.getElementById('pPhoto').value = '';
+    document.getElementById('pPhotoPreview').style.display = 'none';
+    document.getElementById('puzInner').style.display = 'flex';
+    window._postPhotoData = null;
+
     closeSheet();
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 </script>
+
 </body>
 </html>
