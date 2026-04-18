@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Our Family Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream:  #f8f2e8;
+      --warm:   #4e3020;
+      --rust:   #b85535;
+      --gold:   #c99338;
+      --sage:   #6a8f6e;
+      --blush:  #ede4d8;
+      --soft:   #8a7060;
+      --white:  #fffcf7;
+      --ink:    #281808;
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --safe-t: env(safe-area-inset-top, 0px);
+    }
+
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ══════════════ HERO ══════════════ */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 5rem 1.5rem 7rem;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 40%, rgba(201,147,56,.14) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 55% at 85% 25%, rgba(106,143,110,.15) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 65% at 55% 88%, rgba(184,85,53,.10) 0%, transparent 58%),
+        var(--cream);
+    }
+
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(78,48,32,.07);
+      pointer-events: none;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+    }
+
+    .hero-eyebrow {
+      font-size: .68rem; font-weight: 600;
+      letter-spacing: .4em; text-transform: uppercase;
+      color: var(--rust); margin-bottom: 1.5rem;
+      animation: rise .8s .1s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.2rem, 15vw, 7rem);
+      font-weight: 700; line-height: .95;
+      color: var(--warm); margin-bottom: 1.2rem;
+      animation: rise .8s .2s ease both;
+    }
+
+    .hero h1 em { font-style: italic; color: var(--rust); }
+
+    .hero-sub {
+      font-size: clamp(.9rem, 3.5vw, 1.05rem);
+      font-weight: 300; color: var(--soft);
+      margin-bottom: 2.5rem;
+      animation: rise .8s .3s ease both;
+    }
+
+    .cities {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: .6rem 1.5rem;
+      animation: rise .8s .4s ease both;
+    }
+
+    .city {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .76rem; font-weight: 500; color: var(--soft);
+    }
+
+    .cdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: calc(1.75rem + var(--safe-b));
+      left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 6px;
+      animation: rise .8s .9s ease both;
+    }
+
+    .scroll-cue span {
+      font-size: .6rem; letter-spacing: .25em;
+      text-transform: uppercase; color: var(--soft);
+    }
+
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--soft), transparent);
+      animation: bob 2s ease-in-out infinite;
+    }
+
+    /* ══════════════ NAV ══════════════ */
+    nav {
+      position: sticky; top: 0; z-index: 300;
+      background: rgba(248,242,232,.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(78,48,32,.09);
+    }
+
+    .nav-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-style: italic;
+      color: var(--warm); text-decoration: none;
+      padding: .9rem 0;
+    }
+
+    .nav-links { display: flex; }
+
+    .nav-links a {
+      padding: .9rem 1rem;
+      font-size: .69rem; font-weight: 600;
+      letter-spacing: .13em; text-transform: uppercase;
+      color: var(--soft); text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover { color: var(--rust); border-bottom-color: var(--rust); }
+
+    /* Hamburger */
+    .burger {
+      display: none; flex-direction: column; gap: 5px;
+      padding: .9rem .25rem; cursor: pointer;
+      background: none; border: none;
+    }
+
+    .burger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--warm); border-radius: 2px;
+      transition: all .25s;
+    }
+
+    .burger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    .nav-drawer {
+      display: none; flex-direction: column;
+      background: rgba(248,242,232,.98);
+      border-top: 1px solid rgba(78,48,32,.07);
+      padding: .5rem 0 calc(.75rem + var(--safe-b));
+    }
+
+    .nav-drawer.open { display: flex; }
+
+    .nav-drawer a {
+      padding: .85rem 1.5rem;
+      font-size: .8rem; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--soft); text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all .2s;
+    }
+
+    .nav-drawer a:hover,
+    .nav-drawer a:active { color: var(--rust); border-left-color: var(--rust); }
+
+    /* ══════════════ LAYOUT ══════════════ */
+    .wrap {
+      max-width: 1080px; margin: 0 auto;
+      padding: 4rem 1.25rem;
+    }
+
+    .eyebrow {
+      font-size: .67rem; font-weight: 600;
+      letter-spacing: .38em; text-transform: uppercase;
+      color: var(--rust); margin-bottom: .5rem;
+    }
+
+    .sec-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.85rem, 5vw, 3rem);
+      font-weight: 700; color: var(--warm); line-height: 1.1;
+    }
+
+    .rule {
+      width: 42px; height: 2px;
+      background: var(--gold); border-radius: 2px;
+      margin: 1rem 0 1.4rem;
+    }
+
+    .intro {
+      font-size: .95rem; font-weight: 300;
+      color: var(--soft); line-height: 1.85;
+      max-width: 520px;
+    }
+
+    /* ══════════════ FAMILY ══════════════ */
+    #family { background: var(--blush); }
+
+    .fgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .9rem; margin-top: 2rem;
+    }
+
+    .fcard {
+      background: var(--white);
+      border-radius: 1.1rem;
+      padding: 1.6rem 1rem 1.4rem;
+      text-align: center;
+      border: 1px solid rgba(78,48,32,.07);
+      box-shadow: 0 2px 14px rgba(78,48,32,.07);
+      transition: transform .25s, box-shadow .25s;
+    }
+
+    .fcard.wide { grid-column: 1 / -1; }
+    .fcard:active { transform: scale(.98); }
+
+    .av {
+      width: 54px; height: 54px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-style: italic;
+      color: white; margin: 0 auto .9rem;
+    }
+
+    .fn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--warm); margin-bottom: .3rem;
+    }
+
+    .fc { font-size: .74rem; color: var(--soft); }
+
+    /* ══════════════ CALENDAR ══════════════ */
+    #calendar { background: var(--white); }
+
+    .cal-box {
+      margin-top: 2rem;
+      border: 1px solid rgba(78,48,32,.1);
+      border-radius: 1.25rem; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(78,48,32,.09);
+    }
+
+    .cal-bar {
+      background: var(--warm);
+      padding: 1.1rem 1.4rem;
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: .75rem;
+    }
+
+    .cal-bar h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-style: italic;
+      color: white; font-weight: 400;
+    }
+
+    .badge {
+      background: var(--gold); color: var(--warm);
+      font-size: .62rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: .28rem .8rem; border-radius: 100px;
+    }
+
+    .cal-ph { padding: 2.5rem 1.25rem; text-align: center; background: var(--cream); }
+    .cal-ph .ico { font-size: 3rem; display: block; margin-bottom: 1rem; }
+
+    .cal-ph h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem; color: var(--warm); margin-bottom: .6rem;
+    }
+
+    .cal-ph p {
+      font-size: .86rem; color: var(--soft);
+      line-height: 1.8; max-width: 440px;
+      margin: 0 auto 1.4rem;
+    }
+
+    .cal-steps { display: flex; flex-direction: column; gap: .6rem; max-width: 440px; margin: 0 auto 1.6rem; text-align: left; }
+
+    .cstep {
+      display: flex; align-items: flex-start; gap: .7rem;
+      background: white; border-radius: .7rem;
+      padding: .75rem .9rem;
+      font-size: .82rem; color: var(--soft); line-height: 1.55;
+    }
+
+    .csn {
+      background: var(--rust); color: white;
+      border-radius: 50%; width: 20px; height: 20px;
+      min-width: 20px; display: flex; align-items: center;
+      justify-content: center; font-size: .62rem; font-weight: 700;
+    }
+
+    /* The real iframe — swap placeholder for this once ready */
+    .cal-iframe { width: 100%; height: 560px; border: none; display: block; }
+
+    /* ══════════════ NOTICEBOARD ══════════════ */
+    #noticeboard { background: #ece4d4; }
+
+    .tabs {
+      display: flex; flex-wrap: wrap; gap: .4rem; margin: 1.4rem 0 1.1rem;
+    }
+
+    .tab {
+      padding: .42rem 1rem; border-radius: 100px;
+      font-size: .72rem; font-weight: 600;
+      letter-spacing: .07em; cursor: pointer;
+      border: 2px solid rgba(78,48,32,.12);
+      background: rgba(78,48,32,.05);
+      color: var(--soft); transition: all .2s;
+      -webkit-user-select: none; user-select: none;
+    }
+
+    .tab.active { background: var(--warm); color: white; border-color: var(--warm); }
+
+    /* Masonry wall */
+    .wall {
+      columns: 1; column-gap: 1rem;
+    }
+
+    .post {
+      break-inside: avoid; margin-bottom: 1rem;
+      background: var(--white); border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid rgba(78,48,32,.07);
+      box-shadow: 0 2px 12px rgba(78,48,32,.06);
+      transition: transform .2s, box-shadow .2s;
+      animation: rise .4s ease both;
+    }
+
+    .post:active { transform: scale(.99); }
+    .post.hide { display: none; }
+
+    .post-emo {
+      width: 100%; display: flex; align-items: center;
+      justify-content: center; font-size: 2.8rem;
+      background: var(--blush);
+    }
+
+    .post-body { padding: .9rem 1rem 1rem; }
+
+    .post-tag {
+      font-size: .6rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      margin-bottom: .4rem;
+    }
+
+    .post-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 700;
+      color: var(--warm); margin-bottom: .35rem; line-height: 1.3;
+    }
+
+    .post-text {
+      font-size: .81rem; color: var(--soft); line-height: 1.65;
+    }
+
+    .post-foot {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: .55rem 1rem;
+      border-top: 1px solid rgba(78,48,32,.06);
+      font-size: .7rem; color: var(--soft);
+    }
+
+    .post-from { font-weight: 600; }
+
+    .add-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: .5rem; width: 100%; margin-top: 1.4rem;
+      padding: .95rem; background: var(--warm);
+      color: white; border: none; border-radius: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .8rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer; transition: background .2s;
+    }
+
+    .add-btn:hover { background: var(--rust); }
+
+    /* ══════════════ MAP ══════════════ */
+    #map { background: var(--white); }
+
+    .map-box {
+      margin-top: 2rem;
+      background: var(--cream);
+      border: 1px solid rgba(78,48,32,.09);
+      border-radius: 1.25rem; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(78,48,32,.08);
+    }
+
+    .map-svg { width: 100%; height: auto; display: block; }
+
+    .map-legend {
+      display: flex; flex-wrap: wrap;
+      gap: .6rem 1.4rem; padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(78,48,32,.07);
+    }
+
+    .li {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .73rem; color: var(--soft); font-weight: 500;
+    }
+
+    .ldot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ══════════════ GITHUB GUIDE ══════════════ */
+    #setup { background: var(--warm); }
+    #setup .eyebrow { color: var(--gold); }
+    #setup .sec-title { color: white; }
+    #setup .intro { color: rgba(255,255,255,.6); }
+    #setup .rule { background: var(--gold); }
+
+    #notify { background: #e8ede8; }
+    #notify .eyebrow { color: #4a7a4e; }
+    #notify .sec-title { color: var(--warm); }
+    #notify .step { background: rgba(255,255,255,.7); border-color: rgba(78,48,32,.08); }
+
+    .steps { display: flex; flex-direction: column; gap: .9rem; margin-top: 2rem; }
+
+    .step {
+      display: flex; gap: 1rem; align-items: flex-start;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 1rem; padding: 1.25rem 1.1rem;
+    }
+
+    .sn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-style: italic; font-weight: 700;
+      color: var(--gold); line-height: 1; min-width: 1.8rem;
+    }
+
+    .step h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 700;
+      color: white; margin-bottom: .35rem;
+    }
+
+    .step p {
+      font-size: .81rem; color: rgba(255,255,255,.58); line-height: 1.75;
+    }
+
+    .step p code {
+      background: rgba(201,147,56,.22); color: var(--gold);
+      padding: .1em .4em; border-radius: 4px; font-size: .8em;
+    }
+
+    /* ══════════════ FOOTER ══════════════ */
+    footer {
+      background: #321808; text-align: center;
+      padding: 2.5rem 1.5rem calc(2rem + var(--safe-b));
+      color: rgba(255,255,255,.4); font-size: .78rem;
+    }
+
+    footer strong {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-style: italic;
+      color: rgba(255,255,255,.75); margin-bottom: .3rem;
+    }
+
+    /* ══════════════ MODAL (bottom sheet) ══════════════ */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(40,24,8,.55);
+      z-index: 500;
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+    }
+
+    .overlay.open { opacity: 1; pointer-events: all; }
+
+    .sheet {
+      background: var(--white);
+      border-radius: 1.4rem 1.4rem 0 0;
+      padding: 1.4rem 1.25rem calc(1.5rem + var(--safe-b));
+      width: 100%; max-width: 520px;
+      max-height: 92svh; overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform .32s cubic-bezier(.32,.72,0,1);
+    }
+
+    .overlay.open .sheet { transform: translateY(0); }
+
+    .handle {
+      width: 36px; height: 4px;
+      background: rgba(78,48,32,.16); border-radius: 2px;
+      margin: 0 auto 1.2rem;
+    }
+
+    .sheet h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--warm); margin-bottom: 1.2rem;
+    }
+
+    .fg { display: flex; flex-direction: column; gap: .8rem; margin-bottom: 1.1rem; }
+
+    .fl {
+      font-size: .7rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--soft); margin-bottom: .3rem; display: block;
+    }
+
+    .fi, .fsel, .fta {
+      width: 100%; padding: .78rem .95rem;
+      border: 1.5px solid rgba(78,48,32,.14);
+      border-radius: .7rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; color: var(--ink);
+      background: var(--cream); outline: none;
+      transition: border-color .2s;
+      -webkit-appearance: none; appearance: none;
+    }
+
+    .fi:focus, .fsel:focus, .fta:focus { border-color: var(--rust); }
+    .fta { min-height: 88px; resize: vertical; }
+
+    .ma { display: flex; gap: .65rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: .4rem; padding: .75rem 1.35rem;
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .75rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer;
+      border: 2px solid transparent; transition: all .2s;
+      -webkit-appearance: none;
+    }
+
+    .btn-rust { background: var(--rust); color: white; border-color: var(--rust); }
+    .btn-rust:hover { background: var(--warm); border-color: var(--warm); }
+    .btn-ghost { background: transparent; color: var(--soft); border-color: rgba(78,48,32,.15); }
+    .btn-ghost:hover { border-color: var(--soft); }
+    .btn-full { flex: 1; }
+
+    /* ══════════════ ANIMATIONS ══════════════ */
+    @keyframes rise {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes bob {
+      0%,100% { opacity:.45; }
+      50%      { opacity:1; }
+    }
+
+    /* ══════════════ RESPONSIVE ══════════════ */
+
+    /* Mobile default: 1 column wall, hamburger shown */
+    @media (max-width: 639px) {
+      .nav-links { display: none; }
+      .burger    { display: flex; }
+      .ma        { flex-direction: column; }
+    }
+
+    /* Tablet: 2-col wall, desktop nav */
+    @media (min-width: 640px) {
+      .burger     { display: none; }
+      .nav-drawer { display: none !important; }
+      .wall       { columns: 2 260px; }
+      .fgrid      { grid-template-columns: repeat(4, 1fr); }
+      .fcard.wide { grid-column: auto; }
+    }
+
+    /* Desktop: 3-col wall */
+    @media (min-width: 1000px) {
+      .wall { columns: 3 260px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════ HERO ══════════════════════ -->
+<div class="hero">
+  <div class="ring" style="width:480px;height:480px;"></div>
+  <div class="ring" style="width:760px;height:760px;opacity:.45;"></div>
+
+  <p class="hero-eyebrow">Private · Family Only</p>
+  <h1>Our <em>Family</em><br>Hub</h1>
+  <p class="hero-sub">One place for all of us — wherever we are.</p>
+
+  <div class="cities">
+    <div class="city"><span class="cdot" style="background:#b85535"></span>Amsterdam</div>
+    <div class="city"><span class="cdot" style="background:#c99338"></span>Sydney</div>
+    <div class="city"><span class="cdot" style="background:#6a8f6e"></span>Urbana-Champaign</div>
+    <div class="city"><span class="cdot" style="background:#4e3020"></span>Ann Arbor</div>
+  </div>
+
+  <div class="scroll-cue">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ NAV ══════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">Our Family</a>
+    <div class="nav-links">
+      <a href="#family">Family</a>
+      <a href="#calendar">Calendar</a>
+      <a href="#noticeboard">Noticeboard</a>
+      <a href="#map">Map</a>
+      <a href="#notify">Notifications</a>
+      <a href="#setup">GitHub Guide</a>
+    </div>
+    <button class="burger" id="burger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-drawer" id="drawer">
+    <a href="#family"      onclick="closeNav()">Family</a>
+    <a href="#calendar"    onclick="closeNav()">Calendar</a>
+    <a href="#noticeboard" onclick="closeNav()">Noticeboard</a>
+    <a href="#map"         onclick="closeNav()">Map</a>
+    <a href="#notify"      onclick="closeNav()">Notifications</a>
+    <a href="#setup"       onclick="closeNav()">GitHub Guide</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════ FAMILY ══════════════════════ -->
+<section id="family">
+  <div class="wrap">
+    <p class="eyebrow">Who We Are</p>
+    <h2 class="sec-title">Our Family</h2>
+    <div class="rule"></div>
+
+    <div class="fgrid">
+      <div class="fcard wide">
+        <div class="av" style="background:linear-gradient(135deg,#b85535,#4e3020);">♥</div>
+        <p class="fn">Dad &amp; Mama</p>
+        <p class="fc">📍 Amsterdam, Netherlands 🇳🇱</p>
+      </div>
+      <div class="fcard">
+        <div class="av" style="background:#c99338;">V</div>
+        <p class="fn">Vincent</p>
+        <p class="fc">📍 Sydney 🇦🇺</p>
+      </div>
+      <div class="fcard">
+        <div class="av" style="background:#6a8f6e;">D</div>
+        <p class="fn">Daniel</p>
+        <p class="fc">📍 Urbana-Champaign 🇺🇸</p>
+      </div>
+      <div class="fcard">
+        <div class="av" style="background:#4e3020;">J</div>
+        <p class="fn">Jacob</p>
+        <p class="fc">📍 Ann Arbor 🇺🇸</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CALENDAR ══════════════════════ -->
+<section id="calendar">
+  <div class="wrap">
+    <p class="eyebrow">What's Happening</p>
+    <h2 class="sec-title">Family Calendar</h2>
+    <div class="rule"></div>
+    <p class="intro">
+      A calendar just for us — completely separate from anyone's personal Gmail. Everyone can view it and add events from their own phone.
+    </p>
+
+    <div class="cal-box">
+      <div class="cal-bar">
+        <h3>📅 Our Shared Calendar</h3>
+        <span class="badge">Family Only</span>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           CALENDAR PLACEHOLDER
+           Once your Google Calendar is set up,
+           delete this .cal-ph div and uncomment
+           the <iframe> line at the bottom.
+      ═══════════════════════════════════════ -->
+      <div class="cal-ph">
+        <span class="ico">🗓</span>
+        <h4>Almost there!</h4>
+        <p>The calendar will appear right here once it's set up — it takes about 5 minutes:</p>
+
+        <div class="cal-steps">
+          <div class="cstep">
+            <div class="csn">1</div>
+            Go to <strong>calendar.google.com</strong> → click <strong>"+ Other calendars"</strong> → <strong>"Create new calendar."</strong> Name it <em>Family Hub</em>.
+          </div>
+          <div class="cstep">
+            <div class="csn">2</div>
+            In the calendar settings, scroll to <strong>"Share with specific people"</strong> → add each son's Gmail address → set permission to <strong>"Make changes to events."</strong>
+          </div>
+          <div class="cstep">
+            <div class="csn">3</div>
+            Scroll further to <strong>"Integrate calendar"</strong> → copy the <strong>"Embed code"</strong> (starts with &lt;iframe …).
+          </div>
+          <div class="cstep">
+            <div class="csn">4</div>
+            Open this <code>index.html</code> file in GitHub, find the comment that says <code>REPLACE WITH IFRAME</code>, paste the embed code there, and save. Done!
+          </div>
+        </div>
+
+        <a class="btn btn-rust" href="https://calendar.google.com/calendar/r/settings/createcalendar" target="_blank">
+          Create Family Calendar →
+        </a>
+      </div>
+
+      <!-- REPLACE WITH IFRAME — delete .cal-ph above and uncomment this: -->
+      <!-- <iframe src="YOUR_EMBED_URL_HERE" class="cal-iframe"></iframe> -->
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ NOTICEBOARD ══════════════════════ -->
+<section id="noticeboard">
+  <div class="wrap">
+    <p class="eyebrow">Share Anything</p>
+    <h2 class="sec-title">Family Noticeboard</h2>
+    <div class="rule"></div>
+    <p class="intro">Photos, ideas, recipes, news, funny stuff. Post it here for everyone to see. Scroll through everything or filter by type.</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="filter('all',this)">All</button>
+      <button class="tab" onclick="filter('photo',this)">📸 Photos</button>
+      <button class="tab" onclick="filter('idea',this)">💡 Ideas</button>
+      <button class="tab" onclick="filter('recipe',this)">🍳 Recipes</button>
+      <button class="tab" onclick="filter('news',this)">📰 News</button>
+    </div>
+
+    <div class="wall" id="wall">
+
+      <div class="post" data-cat="photo">
+        <div class="post-emo" style="height:150px;">🌆</div>
+        <div class="post-body">
+          <p class="post-tag" style="color:#c99338;">📸 Photo</p>
+          <p class="post-title">Sydney at sunrise</p>
+          <p class="post-text">Caught this on my morning run. The harbour was completely still. Worth the 5am alarm.</p>
+        </div>
+        <div class="post-foot">
+          <span class="post-from">Vincent</span><span>Sydney</span>
+        </div>
+      </div>
+
+      <div class="post" data-cat="idea">
+        <div class="post-body">
+          <p class="post-tag" style="color:#b85535;">💡 Idea</p>
+          <p class="post-title">Christmas in Amsterdam?</p>
+          <p class="post-text">What if we all came back to Amsterdam this December? The markets are beautiful and it's been 2 years since we were all together.</p>
+        </div>
+        <div class="post-foot">
+          <span class="post-from">Dad</span><span>Amsterdam</span>
+        </div>
+      </div>
+
+      <div class="post" data-cat="recipe">
+        <div class="post-emo" style="height:120px;">🍝</div>
+        <div class="post-body">
+          <p class="post-tag" style="color:#6a8f6e;">🍳 Recipe</p>
+          <p class="post-title">Mama's pasta — finally written down!</p>
+          <p class="post-text">You asked for years. Here it is: 400g tagliatelle, 200g pancetta, 2 egg yolks, pecorino, black pepper. The secret is never add cream.</p>
+        </div>
+        <div class="post-foot">
+          <span class="post-from">Mama</span><span>Amsterdam</span>
+        </div>
+      </div>
+
+      <div class="post" data-cat="news">
+        <div class="post-body">
+          <p class="post-tag" style="color:#4e3020;">📰 News</p>
+          <p class="post-title">Passed my first year exams! 🎉</p>
+          <p class="post-text">Results came in this morning. All passed, one distinction. Feeling good. Now I need to sleep for about 3 days straight.</p>
+        </div>
+        <div class="post-foot">
+          <span class="post-from">Jacob</span><span>Ann Arbor</span>
+        </div>
+      </div>
+
+      <div class="post" data-cat="photo">
+        <div class="post-emo" style="height:130px;">🌨️</div>
+        <div class="post-body">
+          <p class="post-tag" style="color:#c99338;">📸 Photo</p>
+          <p class="post-title">First snow in Illinois</p>
+          <p class="post-text">It came down so fast. The campus looks like a snow globe right now.</p>
+        </div>
+        <div class="post-foot">
+          <span class="post-from">Daniel</span><span>Urbana-Champaign</span>
+        </div>
+      </div>
+
+      <div class="post" data-cat="idea">
+        <div class="post-body">
+          <p class="post-tag" style="color:#b85535;">💡 Idea</p>
+          <p class="post-title">Weekly family video call?</p>
+          <p class="post-text">Sundays at 8pm Amsterdam / 5am Sydney (sorry Vincent). We could rotate who picks the topic each week.</p>
+        </div>
+        <div class="post-foot">
+          <span class="post-from">Mama</span><span>Amsterdam</span>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="add-btn" onclick="openSheet()">＋ Add Something to the Board</button>
+  </div>
+</section>
+
+<!-- ══════════════════════ MAP ══════════════════════ -->
+<section id="map">
+  <div class="wrap">
+    <p class="eyebrow">Across the World</p>
+    <h2 class="sec-title">Where We Are</h2>
+    <div class="rule"></div>
+    <p class="intro">Five of us across four cities and three continents. Quite the time zones to navigate.</p>
+
+    <div class="map-box">
+      <svg class="map-svg" viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg">
+        <rect width="900" height="460" fill="#d8edf5"/>
+        <!-- Continents (simplified) -->
+        <path d="M105,72 L200,62 L246,86 L263,126 L253,176 L223,218 L203,256 L183,276 L163,266 L143,236 L123,196 L103,156 L93,116 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
+        <path d="M183,276 L219,271 L239,306 L245,356 L229,396 L209,416 L189,406 L173,366 L169,326 L174,291 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
+        <path d="M386,52 L446,47 L466,70 L456,106 L423,116 L399,106 L383,86 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
+        <path d="M396,126 L453,120 L473,156 L468,216 L453,266 L423,286 L397,266 L379,216 L375,166 L385,136 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
+        <path d="M459,47 L606,37 L683,62 L704,105 L683,145 L643,165 L593,155 L543,145 L491,133 L459,105 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
+        <path d="M649,272 L723,262 L763,289 L768,335 L743,365 L703,370 L668,349 L647,315 Z" fill="#d8cfbe" stroke="#bfb09c" stroke-width="1.2"/>
+
+        <!-- Dashed lines connecting cities -->
+        <line x1="416" y1="78" x2="721" y2="335" stroke="#b85535" stroke-width="1.3" stroke-dasharray="7,5" opacity=".3"/>
+        <line x1="416" y1="78" x2="173" y2="154" stroke="#6a8f6e" stroke-width="1.3" stroke-dasharray="7,5" opacity=".3"/>
+        <line x1="416" y1="78" x2="191" y2="139" stroke="#4e3020" stroke-width="1.3" stroke-dasharray="7,5" opacity=".3"/>
+        <line x1="173" y1="154" x2="191" y2="139" stroke="#c99338" stroke-width="1" stroke-dasharray="5,4" opacity=".25"/>
+
+        <!-- Amsterdam -->
+        <circle cx="416" cy="78" r="13" fill="#b85535" stroke="white" stroke-width="2.5"/>
+        <text x="416" y="83" text-anchor="middle" fill="white" font-size="10" font-family="DM Sans,sans-serif">♥</text>
+        <text x="416" y="61" text-anchor="middle" fill="#b85535" font-size="10" font-weight="600" font-family="DM Sans,sans-serif">Amsterdam</text>
+
+        <!-- Sydney -->
+        <circle cx="721" cy="335" r="13" fill="#c99338" stroke="white" stroke-width="2.5"/>
+        <text x="721" y="340" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">V</text>
+        <text x="721" y="318" text-anchor="middle" fill="#c99338" font-size="10" font-weight="600" font-family="DM Sans,sans-serif">Sydney</text>
+
+        <!-- Urbana-Champaign -->
+        <circle cx="173" cy="154" r="13" fill="#6a8f6e" stroke="white" stroke-width="2.5"/>
+        <text x="173" y="159" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">D</text>
+        <text x="173" y="137" text-anchor="middle" fill="#6a8f6e" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">U-C, IL</text>
+
+        <!-- Ann Arbor -->
+        <circle cx="191" cy="139" r="13" fill="#4e3020" stroke="white" stroke-width="2.5"/>
+        <text x="191" y="144" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">J</text>
+        <text x="228" y="136" text-anchor="start" fill="#4e3020" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">Ann Arbor</text>
+      </svg>
+
+      <div class="map-legend">
+        <div class="li"><span class="ldot" style="background:#b85535"></span>Dad &amp; Mama — Amsterdam</div>
+        <div class="li"><span class="ldot" style="background:#c99338"></span>Vincent — Sydney</div>
+        <div class="li"><span class="ldot" style="background:#6a8f6e"></span>Daniel — Urbana-Champaign</div>
+        <div class="li"><span class="ldot" style="background:#4e3020"></span>Jacob — Ann Arbor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ GITHUB GUIDE ══════════════════════ -->
+<section id="setup">
+  <div class="wrap">
+    <p class="eyebrow">Getting This Online</p>
+    <h2 class="sec-title">How to Publish on GitHub</h2>
+    <div class="rule"></div>
+    <p class="intro">GitHub is a free service where you host this page so everyone in the family can visit it anytime from any phone. No experience needed — follow these steps:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div>
+          <h4>Create a free GitHub account</h4>
+          <p>Go to <code>github.com</code> → click "Sign up." Use your email, pick any username like <code>ourfamilyhub</code>, and confirm your email.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div>
+          <h4>Create a repository (a project folder)</h4>
+          <p>Click the green <strong>"New"</strong> button. Name it exactly: <code>yourusername.github.io</code> (swap in your username). Tick <strong>"Add a README file"</strong> and click <strong>"Create repository."</strong></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div>
+          <h4>Upload this file</h4>
+          <p>Click <strong>"Add file" → "Upload files."</strong> Drag your <code>index.html</code> file into the box. Write "First upload" in the message box and click <strong>"Commit changes"</strong> — that just means "save."</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div>
+          <h4>Switch on GitHub Pages</h4>
+          <p>Click <strong>Settings</strong> at the top → find <strong>"Pages"</strong> in the left sidebar → under "Branch" choose <code>main</code> → click <strong>Save.</strong> Wait 2 minutes.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">5</div>
+        <div>
+          <h4>Your site is live! 🎉</h4>
+          <p>Visit <code>https://yourusername.github.io</code> — it's online and free forever. Share that link with Vincent, Daniel, and Jacob. Bookmark it on every phone.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">6</div>
+        <div>
+          <h4>To update the site later</h4>
+          <p>Go to your GitHub repository → click the <code>index.html</code> file → click the pencil ✏️ icon → make your changes → click <strong>"Commit changes."</strong> The live site updates in under a minute.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ NOTIFICATIONS ══════════════════════ -->
+<section id="notify">
+  <div class="wrap">
+    <p class="eyebrow">Stay in the Loop</p>
+    <h2 class="sec-title">Family Notifications</h2>
+    <div class="rule"></div>
+    <p class="intro">
+      The site can't send iPhone push notifications on its own — but these two free Google tools mean the family gets a nudge in their Gmail inbox (which does pop up on iPhone) whenever something important happens.
+    </p>
+
+    <div class="steps" style="margin-top:2rem;">
+
+      <div class="step">
+        <div class="sn">📧</div>
+        <div>
+          <h4>Set up a Family Group Email</h4>
+          <p>A Google Group gives your family one shared email address — something like <code>ourfamily@googlegroups.com</code>. Send one email to that address and it lands in everyone's Gmail inbox instantly. Great for announcements, trip plans, or sharing something from the noticeboard.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="sn">1</div>
+        <div>
+          <h4>Create the group</h4>
+          <p>Go to <code>groups.google.com</code> → click <strong>"Create group"</strong> → give it a name like <em>Our Family</em> and an email address → set "Who can post" to <strong>"Group members"</strong> → click <strong>Create.</strong></p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="sn">2</div>
+        <div>
+          <h4>Add everyone</h4>
+          <p>Click <strong>"People" → "Members" → "Add members."</strong> Add Mama, Vincent, Daniel, and Jacob's Gmail addresses. They'll each get an invite email — they just tap <strong>Accept</strong> and they're in.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="sn">3</div>
+        <div>
+          <h4>Make sure Gmail notifications are on (iPhone)</h4>
+          <p>On each iPhone: go to <strong>Settings → Notifications → Gmail</strong> → make sure <strong>"Allow Notifications"</strong> is switched on. Now every family email shows up as a pop-up on their lock screen — just like a text message.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="sn">📅</div>
+        <div>
+          <h4>Calendar event reminders</h4>
+          <p>Once the shared Family Calendar is set up, Google automatically emails everyone when a new event is added or when an event is coming up. No extra setup needed — it's built in. Each person can also set their own reminder timing in their Google Calendar settings.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="sn">📱</div>
+        <div>
+          <h4>Add this site to your iPhone Home Screen</h4>
+          <p>Open the site in <strong>Safari</strong> → tap the share button (box with arrow ↑) → tap <strong>"Add to Home Screen"</strong> → tap <strong>Add.</strong> It sits on your home screen like an app. Do this on every family phone so the site is always one tap away.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:2rem;">
+      <a class="btn btn-rust" href="https://groups.google.com/my-groups" target="_blank" style="display:inline-flex;">
+        Set Up Family Group →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer>
+  <strong>Our Family Hub</strong>
+  Amsterdam · Sydney · Urbana-Champaign · Ann Arbor<br>
+  <span style="font-size:.7rem;opacity:.55;margin-top:.3rem;display:block;">Private · Made with love</span>
+</footer>
+
+<!-- ══════════════════════ ADD POST SHEET ══════════════════════ -->
+<div class="overlay" id="overlay" onclick="bgClose(event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Add to the Noticeboard</h3>
+
+    <div class="fg">
+      <label class="fl">Your name</label>
+      <select class="fsel" id="pFrom">
+        <option value="">Choose…</option>
+        <option>Dad</option>
+        <option>Mama</option>
+        <option>Vincent</option>
+        <option>Daniel</option>
+        <option>Jacob</option>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label class="fl">Category</label>
+      <select class="fsel" id="pCat">
+        <option value="photo">📸 Photo</option>
+        <option value="idea">💡 Idea</option>
+        <option value="recipe">🍳 Recipe</option>
+        <option value="news">📰 News</option>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label class="fl">Title</label>
+      <input class="fi" id="pTitle" type="text" placeholder="What's this about?" />
+    </div>
+
+    <div class="fg">
+      <label class="fl">Message</label>
+      <textarea class="fta" id="pText" placeholder="Share something with the family…"></textarea>
+    </div>
+
+    <div class="ma">
+      <button class="btn btn-ghost" onclick="closeSheet()">Cancel</button>
+      <button class="btn btn-rust btn-full" onclick="addPost()">Post to Board</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ JS ══════════════════════ -->
+<script>
+  /* Nav */
+  const burger = document.getElementById('burger');
+  const drawer = document.getElementById('drawer');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('open');
+    drawer.classList.toggle('open');
+  });
+  function closeNav() {
+    burger.classList.remove('open');
+    drawer.classList.remove('open');
+  }
+
+  /* Filter */
+  function filter(cat, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#wall .post').forEach(p => {
+      p.classList.toggle('hide', cat !== 'all' && p.dataset.cat !== cat);
+    });
+  }
+
+  /* Sheet */
+  const overlay = document.getElementById('overlay');
+  function openSheet()  { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeSheet() { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+  function bgClose(e)   { if (e.target === overlay) closeSheet(); }
+
+  /* Add post */
+  const clr = { photo:'#c99338', idea:'#b85535', recipe:'#6a8f6e', news:'#4e3020' };
+  const lbl = { photo:'📸 Photo', idea:'💡 Idea', recipe:'🍳 Recipe', news:'📰 News' };
+  const emo = { photo:'🖼️', idea:'💡', recipe:'🍳', news:'📰' };
+
+  function addPost() {
+    const from  = document.getElementById('pFrom').value.trim();
+    const cat   = document.getElementById('pCat').value;
+    const title = document.getElementById('pTitle').value.trim();
+    const text  = document.getElementById('pText').value.trim();
+
+    if (!from || !title || !text) {
+      alert('Please fill in your name, a title, and a message!');
+      return;
+    }
+
+    const card = document.createElement('div');
+    card.className = 'post';
+    card.dataset.cat = cat;
+    card.innerHTML = `
+      <div class="post-emo" style="height:100px;">${emo[cat]}</div>
+      <div class="post-body">
+        <p class="post-tag" style="color:${clr[cat]}">${lbl[cat]}</p>
+        <p class="post-title">${title}</p>
+        <p class="post-text">${text}</p>
+      </div>
+      <div class="post-foot">
+        <span class="post-from">${from}</span><span>Just now</span>
+      </div>`;
+
+    document.getElementById('wall').prepend(card);
+    document.getElementById('pFrom').value  = '';
+    document.getElementById('pTitle').value = '';
+    document.getElementById('pText').value  = '';
+    closeSheet();
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+</script>
+</body>
+</html>
