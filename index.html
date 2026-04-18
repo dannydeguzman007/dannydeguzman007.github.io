@@ -1845,10 +1845,20 @@
       for (let d = 1; d <= days; d++) {
         const date      = new Date(y, mo, d);
         const isToday   = date.toDateString() === today.toDateString();
+
+        // Match events that START on this day OR span across this day
         const dayEvents = allEvents.filter(e => {
-          const es = new Date(e.start); es.setHours(0,0,0,0);
-          const ds = new Date(date);    ds.setHours(0,0,0,0);
-          return es.getTime() === ds.getTime();
+          const start = new Date(e.start); start.setHours(0,0,0,0);
+          const end   = new Date(e.end);   end.setHours(0,0,0,0);
+          const day   = new Date(date);    day.setHours(0,0,0,0);
+
+          if (e.allDay) {
+            // All-day: event covers [start, end) — end date is exclusive in Google API
+            return day >= start && day < end;
+          } else {
+            // Timed: show on the day it starts
+            return start.getTime() === day.getTime();
+          }
         });
         const isSel = selectedDay && date.toDateString() === selectedDay.toDateString();
         const cell  = makeCell(d, isToday, dayEvents, isSel);
@@ -1896,13 +1906,18 @@
     }
 
     function showDayEvents(date) {
-      const box    = document.getElementById('calEvents');
-      const label  = date.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+      const box   = document.getElementById('calEvents');
+      const label = date.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
       const events = allEvents.filter(e => {
-        const es = new Date(e.start); es.setHours(0,0,0,0);
-        const ds = new Date(date);    ds.setHours(0,0,0,0);
-        return es.getTime() === ds.getTime();
+        const start = new Date(e.start); start.setHours(0,0,0,0);
+        const end   = new Date(e.end);   end.setHours(0,0,0,0);
+        const day   = new Date(date);    day.setHours(0,0,0,0);
+        if (e.allDay) {
+          return day >= start && day < end;
+        } else {
+          return start.getTime() === day.getTime();
+        }
       });
 
       if (!events.length) {
@@ -1916,12 +1931,14 @@
       box.innerHTML = `
         <p style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:.6rem;">${label}</p>
         ${events.map(e => {
-          const timeStr = e.allDay ? 'All day' : e.start.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+          const timeStr = e.allDay
+            ? '📅 All day'
+            : '🕐 ' + e.start.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
           return `
             <div style="background:white;border-radius:.75rem;padding:.75rem 1rem;margin-bottom:.5rem;border-left:3px solid var(--rust);box-shadow:0 1px 6px rgba(78,48,32,.07);">
               <p style="font-size:.88rem;font-weight:600;color:var(--warm);">${e.title}</p>
-              <p style="font-size:.72rem;color:var(--soft);margin-top:.2rem;">🕐 ${timeStr}${e.location ? ' · 📍 ' + e.location : ''}</p>
-              ${e.description ? `<p style="font-size:.72rem;color:var(--soft);margin-top:.2rem;">${e.description.substring(0,80)}${e.description.length>80?'…':''}</p>` : ''}
+              <p style="font-size:.72rem;color:var(--soft);margin-top:.2rem;">${timeStr}${e.location ? ' · 📍 ' + e.location : ''}</p>
+              ${e.description ? `<p style="font-size:.72rem;color:var(--soft);margin-top:.2rem;">${e.description.substring(0,100)}${e.description.length>100?'…':''}</p>` : ''}
             </div>`;
         }).join('')}`;
     }
