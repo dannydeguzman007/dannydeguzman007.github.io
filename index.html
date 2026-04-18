@@ -217,7 +217,6 @@
       max-width: 540px;
     }
 
-    /* Shared step style */
     .steps { display: flex; flex-direction: column; gap: .9rem; margin-top: 2rem; }
 
     .step {
@@ -243,7 +242,6 @@
       padding: .1em .4em; border-radius: 4px; font-size: .8em;
     }
 
-    /* Shared btn */
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
       gap: .4rem; padding: .75rem 1.35rem;
@@ -278,7 +276,7 @@
       text-align: center;
       border: 1px solid rgba(78,48,32,.07);
       box-shadow: 0 2px 14px rgba(78,48,32,.07);
-      transition: transform .25s, box-shadow .25s;
+      transition: transform .25s;
     }
 
     .fcard.wide { grid-column: 1 / -1; }
@@ -330,37 +328,23 @@
       padding: .28rem .8rem; border-radius: 100px;
     }
 
-    .cal-ph { padding: 2.5rem 1.25rem; text-align: center; background: var(--cream); }
-    .cal-ph .ico { font-size: 3rem; display: block; margin-bottom: 1rem; }
-
-    .cal-ph h4 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.35rem; color: var(--warm); margin-bottom: .6rem;
+    /* Calendar iframe — responsive wrapper */
+    .cal-responsive {
+      position: relative;
+      width: 100%;
+      background: var(--cream);
     }
 
-    .cal-ph p {
-      font-size: .86rem; color: var(--soft);
-      line-height: 1.8; max-width: 440px;
-      margin: 0 auto 1.4rem;
+    .cal-responsive iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      display: block;
     }
 
-    .cal-steps { display: flex; flex-direction: column; gap: .6rem; max-width: 440px; margin: 0 auto 1.6rem; text-align: left; }
-
-    .cstep {
-      display: flex; align-items: flex-start; gap: .7rem;
-      background: white; border-radius: .7rem;
-      padding: .75rem .9rem;
-      font-size: .82rem; color: var(--soft); line-height: 1.55;
+    @media (max-width: 639px) {
+      .cal-responsive iframe { height: 420px; }
     }
-
-    .csn {
-      background: var(--rust); color: white;
-      border-radius: 50%; width: 20px; height: 20px;
-      min-width: 20px; display: flex; align-items: center;
-      justify-content: center; font-size: .62rem; font-weight: 700;
-    }
-
-    .cal-iframe { width: 100%; height: 560px; border: none; display: block; }
 
     /* ══════════════ NOTICEBOARD ══════════════ */
     #noticeboard { background: #ece4d4; }
@@ -469,35 +453,18 @@
 
     /* ══════════════ NOTIFICATIONS ══════════════ */
     #notify { background: #e6ede6; }
-
     #notify .eyebrow { color: #3d6b42; }
-
-    #notify .step {
-      background: rgba(255,255,255,.75);
-      border: 1px solid rgba(78,48,32,.08);
-    }
-
-    #notify .step .sn { color: #3d6b42; }
-    #notify .step h4 { color: var(--warm); }
-    #notify .step p  { color: var(--soft); }
-
-    #notify .step p code {
-      background: rgba(61,107,66,.12);
-      color: #3d6b42;
-    }
 
     .notify-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1rem;
-      margin-top: 2rem;
+      gap: 1rem; margin-top: 2rem;
     }
 
     .notify-card {
       background: rgba(255,255,255,.75);
       border: 1px solid rgba(78,48,32,.08);
-      border-radius: 1rem;
-      padding: 1.5rem 1.25rem;
+      border-radius: 1rem; padding: 1.5rem 1.25rem;
     }
 
     .notify-icon { font-size: 2rem; margin-bottom: .75rem; display: block; }
@@ -513,9 +480,7 @@
       line-height: 1.75; margin-bottom: 1rem;
     }
 
-    .notify-steps {
-      display: flex; flex-direction: column; gap: .5rem;
-    }
+    .notify-steps { display: flex; flex-direction: column; gap: .5rem; }
 
     .nstep {
       display: flex; align-items: flex-start; gap: .65rem;
@@ -530,9 +495,15 @@
       flex-shrink: 0; margin-top: .1rem;
     }
 
+    .tip-box {
+      margin-top: 2rem; padding: 1.25rem;
+      background: rgba(255,255,255,.6);
+      border-radius: 1rem; border: 1px solid rgba(78,48,32,.08);
+      font-size: .85rem; color: var(--soft); line-height: 1.75;
+    }
+
     /* ══════════════ GITHUB GUIDE ══════════════ */
     #setup { background: var(--warm); }
-
     #setup .eyebrow { color: var(--gold); }
     #setup .sec-title { color: white; }
     #setup .intro { color: rgba(255,255,255,.6); }
@@ -546,11 +517,7 @@
     #setup .step .sn { color: var(--gold); }
     #setup .step h4 { color: white; }
     #setup .step p  { color: rgba(255,255,255,.58); }
-
-    #setup .step p code {
-      background: rgba(201,147,56,.22);
-      color: var(--gold);
-    }
+    #setup .step p code { background: rgba(201,147,56,.22); color: var(--gold); }
 
     /* ══════════════ FOOTER ══════════════ */
     footer {
@@ -655,8 +622,8 @@
     }
 
     @media (min-width: 1000px) {
-      .wall         { columns: 3 260px; }
-      .notify-grid  { grid-template-columns: 1fr 1fr 1fr; }
+      .wall        { columns: 3 260px; }
+      .notify-grid { grid-template-columns: 1fr 1fr 1fr; }
     }
   </style>
 </head>
@@ -748,41 +715,16 @@
     <p class="eyebrow">What's Happening</p>
     <h2 class="sec-title">Family Calendar</h2>
     <div class="rule"></div>
-    <p class="intro">A calendar just for us — completely separate from anyone's personal Gmail. Everyone can view it and add events from their own phone.</p>
+    <p class="intro">Our shared family calendar — completely separate from anyone's personal Gmail. Everyone can view and add events from their own phone.</p>
 
     <div class="cal-box">
       <div class="cal-bar">
         <h3>📅 Our Shared Calendar</h3>
         <span class="badge">Family Only</span>
       </div>
-
-      <div class="cal-ph">
-        <span class="ico">🗓</span>
-        <h4>Almost there!</h4>
-        <p>The calendar will appear right here once it's set up. It takes about 5 minutes:</p>
-        <div class="cal-steps">
-          <div class="cstep">
-            <div class="csn">1</div>
-            Go to <strong>calendar.google.com</strong> → click <strong>"+ Other calendars"</strong> → <strong>"Create new calendar."</strong> Name it <em>Family Hub</em>.
-          </div>
-          <div class="cstep">
-            <div class="csn">2</div>
-            In calendar settings → <strong>"Share with specific people"</strong> → add each son's Gmail → set permission to <strong>"Make changes to events."</strong>
-          </div>
-          <div class="cstep">
-            <div class="csn">3</div>
-            Scroll to <strong>"Integrate calendar"</strong> → copy the <strong>"Embed code"</strong> (starts with &lt;iframe …).
-          </div>
-          <div class="cstep">
-            <div class="csn">4</div>
-            Open <code>index.html</code> in GitHub, find <iframe src="https://calendar.google.com/calendar/embed?src=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com&ctz=America%2FChicago" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>, paste the code there and save. Done!
-          </div>
-        </div>
-        <a class="btn btn-rust" href="https://calendar.google.com/calendar/r/settings/createcalendar" target="_blank">Create Family Calendar →</a>
+      <div class="cal-responsive">
+        <iframe src="https://calendar.google.com/calendar/embed?src=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com&ctz=America%2FChicago" frameborder="0" scrolling="no"></iframe>
       </div>
-      <!-- REPLACE WITH IFRAME — delete .cal-ph above and uncomment:
-      <iframe src="https://calendar.google.com/calendar/embed?src=c4d9f2920aa5302c0e44fd98d6dd7b4a55d346c4758178c1b6eb7cafc91084fa%40group.calendar.google.com&ctz=America%2FChicago" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-      -->
     </div>
   </div>
 </section>
@@ -931,18 +873,9 @@
         <h3>Family Group Email</h3>
         <p>One email address that reaches everyone at once. Send it and all five of you get it in your Gmail inbox — which pops up on iPhone just like a text.</p>
         <div class="notify-steps">
-          <div class="nstep">
-            <div class="nnum">1</div>
-            Go to <strong>groups.google.com</strong> → click <strong>"Create group"</strong> → name it <em>Our Family</em> and pick an address like <em>ourfamily@googlegroups.com</em>.
-          </div>
-          <div class="nstep">
-            <div class="nnum">2</div>
-            Click <strong>People → Members → Add members</strong> → add Mama, Vincent, Daniel and Jacob's Gmail addresses. They each get an invite to tap Accept.
-          </div>
-          <div class="nstep">
-            <div class="nnum">3</div>
-            Done! Now email that address whenever you want to reach everyone at once.
-          </div>
+          <div class="nstep"><div class="nnum">1</div>Go to <strong>groups.google.com</strong> → click <strong>"Create group"</strong> → name it <em>Our Family</em> and pick an address like <em>ourfamily@googlegroups.com</em>.</div>
+          <div class="nstep"><div class="nnum">2</div>Click <strong>People → Members → Add members</strong> → add Mama, Vincent, Daniel and Jacob's Gmail addresses. They each get an invite to tap Accept.</div>
+          <div class="nstep"><div class="nnum">3</div>Done! Now email that one address whenever you want to reach everyone at once.</div>
         </div>
         <div style="margin-top:1.1rem;">
           <a class="btn btn-rust" href="https://groups.google.com/my-groups" target="_blank">Set Up Group →</a>
@@ -952,20 +885,11 @@
       <div class="notify-card">
         <span class="notify-icon">📅</span>
         <h3>Calendar Reminders</h3>
-        <p>Once the shared Family Calendar is active, Google automatically emails everyone when a new event is added or coming up. Nothing extra to set up — it's built in.</p>
+        <p>Google automatically emails everyone when a new event is added or coming up. Nothing extra to set up — it's built into the shared calendar.</p>
         <div class="notify-steps">
-          <div class="nstep">
-            <div class="nnum">1</div>
-            Set up the Family Calendar (see the Calendar section above).
-          </div>
-          <div class="nstep">
-            <div class="nnum">2</div>
-            Each person can go to <strong>Google Calendar → Settings → Notifications</strong> to choose how far in advance they want reminders — 1 day, 1 hour, etc.
-          </div>
-          <div class="nstep">
-            <div class="nnum">3</div>
-            Reminders land in Gmail and show as iPhone notifications automatically.
-          </div>
+          <div class="nstep"><div class="nnum">1</div>The Family Calendar above is already set up — reminders are on by default.</div>
+          <div class="nstep"><div class="nnum">2</div>Each person can go to <strong>Google Calendar → Settings → Notifications</strong> to choose how far in advance they want reminders.</div>
+          <div class="nstep"><div class="nnum">3</div>Reminders land in Gmail and show as iPhone notifications automatically.</div>
         </div>
         <div style="margin-top:1.1rem;">
           <a class="btn btn-rust" href="https://calendar.google.com/calendar/r/settings" target="_blank">Calendar Settings →</a>
@@ -975,20 +899,11 @@
       <div class="notify-card">
         <span class="notify-icon">📱</span>
         <h3>Add Site to Home Screen</h3>
-        <p>Save this site to your iPhone home screen so it looks and opens like an app — one tap and you're on the Family Hub. Do this on every family phone.</p>
+        <p>Save this site to your iPhone home screen so it opens like an app — one tap and you're on the Family Hub. Do this on every family phone.</p>
         <div class="notify-steps">
-          <div class="nstep">
-            <div class="nnum">1</div>
-            Open the Family Hub link in <strong>Safari</strong> on your iPhone (must be Safari, not Chrome).
-          </div>
-          <div class="nstep">
-            <div class="nnum">2</div>
-            Tap the <strong>share button</strong> (box with arrow ↑) at the bottom of the screen.
-          </div>
-          <div class="nstep">
-            <div class="nnum">3</div>
-            Scroll down and tap <strong>"Add to Home Screen"</strong> → tap <strong>Add.</strong> The site icon now lives on your home screen!
-          </div>
+          <div class="nstep"><div class="nnum">1</div>Open the Family Hub link in <strong>Safari</strong> on your iPhone (must be Safari, not Chrome).</div>
+          <div class="nstep"><div class="nnum">2</div>Tap the <strong>share button</strong> (box with arrow ↑) at the bottom of the screen.</div>
+          <div class="nstep"><div class="nnum">3</div>Scroll down and tap <strong>"Add to Home Screen"</strong> → tap <strong>Add.</strong> The site icon now lives on your home screen!</div>
         </div>
         <div style="margin-top:1.1rem;">
           <span class="btn btn-rust" style="opacity:.5;cursor:default;">Do this in Safari on iPhone</span>
@@ -997,11 +912,9 @@
 
     </div>
 
-    <div style="margin-top:2rem; padding:1.25rem; background:rgba(255,255,255,.6); border-radius:1rem; border:1px solid rgba(78,48,32,.08);">
-      <p style="font-size:.85rem; color:var(--soft); line-height:1.75;">
-        <strong style="color:var(--warm);">💡 Make sure Gmail notifications are on:</strong>
-        On each iPhone go to <strong>Settings → Notifications → Gmail</strong> and make sure <strong>"Allow Notifications"</strong> is switched on. This is what makes family emails and calendar reminders pop up on the lock screen.
-      </p>
+    <div class="tip-box">
+      <strong style="color:var(--warm);">💡 Make sure Gmail notifications are on:</strong>
+      On each iPhone go to <strong>Settings → Notifications → Gmail</strong> and make sure <strong>"Allow Notifications"</strong> is switched on. This is what makes family emails and calendar reminders pop up on the lock screen.
     </div>
   </div>
 </section>
@@ -1012,7 +925,7 @@
     <p class="eyebrow">Getting This Online</p>
     <h2 class="sec-title">How to Publish on GitHub</h2>
     <div class="rule"></div>
-    <p class="intro">GitHub is a free service where you host this page so everyone in the family can visit it anytime from any phone. No experience needed — follow these steps:</p>
+    <p class="intro">GitHub is a free service where you host this page so everyone in the family can visit it anytime from any phone. No experience needed.</p>
 
     <div class="steps">
       <div class="step">
@@ -1115,7 +1028,6 @@
 
 <!-- ══════════════════════ JS ══════════════════════ -->
 <script>
-  /* Nav */
   const burger = document.getElementById('burger');
   const drawer = document.getElementById('drawer');
   burger.addEventListener('click', () => {
@@ -1127,7 +1039,6 @@
     drawer.classList.remove('open');
   }
 
-  /* Filter */
   function filterPosts(cat, btn) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
@@ -1136,13 +1047,11 @@
     });
   }
 
-  /* Sheet */
   const overlay = document.getElementById('overlay');
   function openSheet()  { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
   function closeSheet() { overlay.classList.remove('open'); document.body.style.overflow = ''; }
   function bgClose(e)   { if (e.target === overlay) closeSheet(); }
 
-  /* Add post */
   const clr = { photo:'#c99338', idea:'#b85535', recipe:'#6a8f6e', news:'#4e3020' };
   const lbl = { photo:'📸 Photo', idea:'💡 Idea', recipe:'🍳 Recipe', news:'📰 News' };
   const emo = { photo:'🖼️', idea:'💡', recipe:'🍳', news:'📰' };
