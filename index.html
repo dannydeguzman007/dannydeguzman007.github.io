@@ -239,9 +239,9 @@
       gap: 1rem; margin-top: 2rem;
     }
 
-    /* All cards equal size — no special wide treatment */
-    .fcard { min-height: 240px; }
-    .fcard.wide { grid-column: auto; min-height: 240px; }
+    /* All cards equal size */
+    .fcard { min-height: 280px; }
+    .fcard.wide { grid-column: auto; min-height: 280px; }
 
     .fcard {
       position: relative;
@@ -278,11 +278,14 @@
       z-index: 1;
     }
 
-    /* ── Bottom content row ── */
+    /* ── Bottom content — circle stacked above name/city ── */
     .fcard-body {
       position: relative; z-index: 2;
-      padding: 1rem 1.1rem 1.1rem;
-      display: flex; align-items: flex-end; gap: 1rem;
+      padding: .85rem 1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .6rem;
     }
 
     /* ── Profile circle — 65% of card width ── */
@@ -291,11 +294,13 @@
       width: 65%;
       padding-bottom: 65%;
       height: 0;
+      align-self: center;
     }
 
     .fcard.wide .profile-wrap {
       width: 45%;
       padding-bottom: 45%;
+      align-self: flex-start;
     }
 
     /* The circle itself — shows initials or uploaded photo */
@@ -345,19 +350,26 @@
     .profile-input { display: none; }
 
     /* ── Name / city text ── */
-    .fcard-info { flex: 1; }
+    .fcard-info { width: 100%; }
 
     .fn {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem; font-weight: 700; color: white;
-      text-shadow: 0 1px 6px rgba(0,0,0,.5);
+      font-size: 1.1rem; font-weight: 700; color: white;
+      text-shadow: 0 1px 6px rgba(0,0,0,.6);
       margin-bottom: .15rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
+    .fcard.wide .fn { font-size: 1.3rem; }
 
     .fc {
       font-size: .72rem; color: rgba(255,255,255,.88);
       text-shadow: 0 1px 4px rgba(0,0,0,.45);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* ── "Change background" pill — top right, hidden by default ── */
@@ -1747,10 +1759,14 @@
     const months = ['January','February','March','April','May','June',
                     'July','August','September','October','November','December'];
 
-    // Fetch events for a 3-month window centred on current month
+    // Fetch events for the entire displayed month (start of month to end of month)
     async function loadEvents() {
-      const start = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-      const end   = new Date(currentDate.getFullYear(), currentDate.getMonth() + 2, 1);
+      const y  = currentDate.getFullYear();
+      const mo = currentDate.getMonth();
+
+      // Fetch from start of current month to end of current month
+      const start = new Date(y, mo, 1);
+      const end   = new Date(y, mo + 1, 1);
 
       const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CAL_ID)}/events`
         + `?key=${API_KEY}`
@@ -1758,7 +1774,7 @@
         + `&timeMax=${end.toISOString()}`
         + `&singleEvents=true`
         + `&orderBy=startTime`
-        + `&maxResults=100`;
+        + `&maxResults=250`;
 
       try {
         const res  = await fetch(url);
@@ -1770,18 +1786,28 @@
           return;
         }
 
-        allEvents = (data.items || []).map(ev => ({
-          title: ev.summary || '(No title)',
-          start: ev.start.date
-            ? new Date(ev.start.date + 'T00:00:00')   // all-day
-            : new Date(ev.start.dateTime),              // timed
-          end: ev.end.date
-            ? new Date(ev.end.date + 'T00:00:00')
-            : new Date(ev.end.dateTime),
-          allDay: !!ev.start.date,
-          location: ev.location || '',
-          description: ev.description || ''
-        }));
+        allEvents = (data.items || []).map(ev => {
+          // All-day events use date (YYYY-MM-DD), timed events use dateTime
+          let start, end, allDay;
+          if (ev.start.date) {
+            // Parse YYYY-MM-DD without timezone conversion
+            const [sy, sm, sd] = ev.start.date.split('-').map(Number);
+            const [ey, em, ed] = ev.end.date.split('-').map(Number);
+            start  = new Date(sy, sm - 1, sd, 0, 0, 0);
+            end    = new Date(ey, em - 1, ed, 0, 0, 0);
+            allDay = true;
+          } else {
+            start  = new Date(ev.start.dateTime);
+            end    = new Date(ev.end.dateTime);
+            allDay = false;
+          }
+          return {
+            title:       ev.summary || '(No title)',
+            start, end, allDay,
+            location:    ev.location    || '',
+            description: ev.description || ''
+          };
+        });
 
         document.getElementById('calLoading').style.display = 'none';
         renderMonth();
