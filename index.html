@@ -799,6 +799,137 @@
       .notify-grid { grid-template-columns: 1fr 1fr 1fr; }
     }
   </style>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp }
+      from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    import { getStorage, ref, uploadString, getDownloadURL }
+      from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+
+    // ── PASTE YOUR FIREBASE CONFIG HERE ──────────────────────────
+    // (You will get this from Firebase Console — see the Setup Guide below)
+    const firebaseConfig = {
+      apiKey:            "PASTE_YOUR_API_KEY",
+      authDomain:        "PASTE_YOUR_PROJECT_ID.firebaseapp.com",
+      projectId:         "PASTE_YOUR_PROJECT_ID",
+      storageBucket:     "PASTE_YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "PASTE_YOUR_SENDER_ID",
+      appId:             "PASTE_YOUR_APP_ID"
+    };
+    // ─────────────────────────────────────────────────────────────
+
+    const app     = initializeApp(firebaseConfig);
+    const db      = getFirestore(app);
+    const storage = getStorage(app);
+
+    const clr = { photo:'#c99338', idea:'#b85535', recipe:'#6a8f6e', news:'#4e3020' };
+    const lbl = { photo:'📸 Photo', idea:'💡 Idea', recipe:'🍳 Recipe', news:'📰 News' };
+    const emo = { photo:'🖼️', idea:'💡', recipe:'🍳', news:'📰' };
+
+    /* ── Render a single post card from a Firestore document ── */
+    function renderPost(doc) {
+      const d    = doc.data();
+      const wall = document.getElementById('wall');
+
+      // Don't duplicate
+      if (document.getElementById('post-' + doc.id)) return;
+
+      let topHTML = '';
+      if (d.cat === 'photo' && d.imageUrl) {
+        topHTML = `<img src="${d.imageUrl}" style="width:100%;max-height:280px;object-fit:cover;display:block;" />`;
+      } else {
+        topHTML = `<div class="post-emo" style="height:100px;">${emo[d.cat] || '📌'}</div>`;
+      }
+
+      const timeAgo = d.ts ? timeAgoStr(d.ts.toDate()) : 'Just now';
+
+      const card = document.createElement('div');
+      card.className   = 'post';
+      card.id          = 'post-' + doc.id;
+      card.dataset.cat = d.cat;
+      card.innerHTML = `
+        ${topHTML}
+        <div class="post-body">
+          <p class="post-tag" style="color:${clr[d.cat]}">${lbl[d.cat]}</p>
+          <p class="post-title">${d.title}</p>
+          ${d.text ? `<p class="post-text">${d.text}</p>` : ''}
+        </div>
+        <div class="post-foot">
+          <span class="post-from">${d.from}</span><span>${timeAgo}</span>
+        </div>`;
+
+      // Insert newest first
+      wall.prepend(card);
+    }
+
+    /* ── Time-ago helper ── */
+    function timeAgoStr(date) {
+      const secs = Math.floor((Date.now() - date) / 1000);
+      if (secs < 60)   return 'Just now';
+      if (secs < 3600) return Math.floor(secs/60) + 'm ago';
+      if (secs < 86400) return Math.floor(secs/3600) + 'h ago';
+      return date.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+    }
+
+    /* ── Listen for posts in real time ── */
+    function startListening() {
+      const q = query(collection(db, 'posts'), orderBy('ts', 'desc'));
+      onSnapshot(q, snapshot => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === 'added') renderPost(change.doc);
+        });
+        // Hide loading indicator
+        const loader = document.getElementById('wall-loader');
+        if (loader) loader.remove();
+      });
+    }
+
+    /* ── Save a post to Firestore ── */
+    async function savePost(from, cat, title, text, photoData, notify) {
+      let imageUrl = null;
+
+      // Upload photo to Firebase Storage if present
+      if (cat === 'photo' && photoData) {
+        const imgRef = ref(storage, `posts/${Date.now()}.jpg`);
+        await uploadString(imgRef, photoData, 'data_url');
+        imageUrl = await getDownloadURL(imgRef);
+      }
+
+      await addDoc(collection(db, 'posts'), {
+        from, cat, title, text, imageUrl,
+        ts: serverTimestamp()
+      });
+
+      // Email notification
+      if (notify) {
+        const subject = encodeURIComponent(`📬 New ${lbl[cat]} on the Family Hub — "${title}" by ${from}`);
+        const body    = encodeURIComponent(
+          `Hi everyone,\n\n${from} just posted something new on the Family Hub!\n\n` +
+          `Category: ${lbl[cat]}\nTitle: ${title}\n` +
+          (text ? `Message: ${text}\n` : '') +
+          `\nSee it here: https://ourfamilyhub.github.io\n\n— The Family Hub 🏠`
+        );
+        window.open(`mailto:deguzman-goose@googlegroups.com?subject=${subject}&body=${body}`, '_blank');
+      }
+    }
+
+    /* ── Expose savePost so the existing addPost() function can call it ── */
+    window._savePost = savePost;
+
+    /* ── Start listening as soon as the config is filled in ── */
+    if (!firebaseConfig.apiKey.includes('PASTE')) {
+      startListening();
+    } else {
+      // Show setup prompt instead of loading spinner
+      const loader = document.getElementById('wall-loader');
+      if (loader) loader.innerHTML = `
+        <div style="text-align:center;padding:2rem;color:var(--soft);">
+          <div style="font-size:2rem;margin-bottom:.75rem;">🔧</div>
+          <p style="font-weight:600;color:var(--warm);margin-bottom:.4rem;">Firebase not connected yet</p>
+          <p style="font-size:.82rem;line-height:1.7;">Follow the Firebase Setup Guide below to connect the live noticeboard. Sample posts are shown for now.</p>
+        </div>`;
+    }
+  </script>
 </head>
 <body>
 
@@ -831,6 +962,7 @@
       <a href="#noticeboard">Noticeboard</a>
       <a href="#map">Map</a>
       <a href="#notify">Notifications</a>
+      <a href="#firebase" style="color:var(--rust);">🔧 Firebase</a>
       <a href="#setup">GitHub Guide</a>
     </div>
     <button class="burger" id="burger" aria-label="Open menu">
@@ -843,6 +975,7 @@
     <a href="#noticeboard" onclick="closeNav()">Noticeboard</a>
     <a href="#map"         onclick="closeNav()">Map</a>
     <a href="#notify"      onclick="closeNav()">Notifications</a>
+    <a href="#firebase"    onclick="closeNav()" style="color:var(--rust);">🔧 Firebase Setup</a>
     <a href="#setup"       onclick="closeNav()">GitHub Guide</a>
   </div>
 </nav>
@@ -1001,7 +1134,14 @@
       <button class="tab" onclick="filterPosts('news',this)">📰 News</button>
     </div>
     <div class="wall" id="wall">
-      <div class="post" data-cat="photo">
+      <!-- Loading indicator — replaced by real posts once Firebase connects -->
+      <div id="wall-loader" style="grid-column:1/-1;padding:2rem;text-align:center;color:var(--soft);">
+        <div style="font-size:1.5rem;margin-bottom:.5rem;">⏳</div>
+        <p style="font-size:.85rem;">Loading posts…</p>
+      </div>
+
+      <!-- Sample posts shown until Firebase is connected -->
+      <div class="post sample-post" data-cat="photo">
         <div class="post-emo" style="height:150px;">🌆</div>
         <div class="post-body">
           <p class="post-tag" style="color:#c99338;">📸 Photo</p>
@@ -1010,7 +1150,7 @@
         </div>
         <div class="post-foot"><span class="post-from">Vincent</span><span>Sydney</span></div>
       </div>
-      <div class="post" data-cat="idea">
+      <div class="post sample-post" data-cat="idea">
         <div class="post-body">
           <p class="post-tag" style="color:#b85535;">💡 Idea</p>
           <p class="post-title">Christmas in Amsterdam?</p>
@@ -1018,7 +1158,7 @@
         </div>
         <div class="post-foot"><span class="post-from">Dad</span><span>Amsterdam</span></div>
       </div>
-      <div class="post" data-cat="recipe">
+      <div class="post sample-post" data-cat="recipe">
         <div class="post-emo" style="height:120px;">🍝</div>
         <div class="post-body">
           <p class="post-tag" style="color:#6a8f6e;">🍳 Recipe</p>
@@ -1027,7 +1167,7 @@
         </div>
         <div class="post-foot"><span class="post-from">Mama</span><span>Amsterdam</span></div>
       </div>
-      <div class="post" data-cat="news">
+      <div class="post sample-post" data-cat="news">
         <div class="post-body">
           <p class="post-tag" style="color:#4e3020;">📰 News</p>
           <p class="post-title">Passed my first year exams! 🎉</p>
@@ -1035,7 +1175,7 @@
         </div>
         <div class="post-foot"><span class="post-from">Jacob</span><span>Ann Arbor</span></div>
       </div>
-      <div class="post" data-cat="photo">
+      <div class="post sample-post" data-cat="photo">
         <div class="post-emo" style="height:130px;">🌨️</div>
         <div class="post-body">
           <p class="post-tag" style="color:#c99338;">📸 Photo</p>
@@ -1044,11 +1184,11 @@
         </div>
         <div class="post-foot"><span class="post-from">Daniel</span><span>Urbana-Champaign</span></div>
       </div>
-      <div class="post" data-cat="idea">
+      <div class="post sample-post" data-cat="idea">
         <div class="post-body">
           <p class="post-tag" style="color:#b85535;">💡 Idea</p>
           <p class="post-title">Weekly family video call?</p>
-          <p class="post-text">Sundays at 8pm Amsterdam / 5am Sydney (sorry Vincent). We could rotate who picks the topic each week.</p>
+          <p class="post-text">Sundays at 8pm Amsterdam / 5am Sydney (sorry Vincent). We could rotate who picks the topic.</p>
         </div>
         <div class="post-foot"><span class="post-from">Mama</span><span>Amsterdam</span></div>
       </div>
@@ -1375,6 +1515,91 @@
   </div>
 </section>
 
+<!-- ══════════════════════ FIREBASE SETUP GUIDE ══════════════════════ -->
+<section id="firebase" style="background:#1a1a2e;">
+  <div class="wrap">
+    <p class="eyebrow" style="color:#f0a500;">One-Time Setup</p>
+    <h2 class="sec-title" style="color:white;">Connect the Live Noticeboard</h2>
+    <div class="rule" style="background:#f0a500;"></div>
+    <p class="intro" style="color:rgba(255,255,255,.6);">
+      Follow these steps once and the noticeboard becomes live — posts from any family member appear instantly on everyone's screen. It's free and takes about 10 minutes.
+    </p>
+
+    <div class="steps" style="margin-top:2rem;">
+
+      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
+        <div class="sn" style="color:#f0a500;">1</div>
+        <div>
+          <h4 style="color:white;">Create a free Firebase account</h4>
+          <p style="color:rgba(255,255,255,.58);">Go to <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">firebase.google.com</code> → click <strong>"Get started"</strong> → sign in with your Gmail account (the same one you use for everything else).</p>
+        </div>
+      </div>
+
+      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
+        <div class="sn" style="color:#f0a500;">2</div>
+        <div>
+          <h4 style="color:white;">Create a new project</h4>
+          <p style="color:rgba(255,255,255,.58);">Click <strong>"Add project"</strong> → name it <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">family-hub</code> → click through the steps → click <strong>"Create project."</strong></p>
+        </div>
+      </div>
+
+      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
+        <div class="sn" style="color:#f0a500;">3</div>
+        <div>
+          <h4 style="color:white;">Add a web app & get your config</h4>
+          <p style="color:rgba(255,255,255,.58);">In your project dashboard → click the <strong>&lt;/&gt; Web</strong> icon → give it the name <em>Family Hub</em> → click <strong>"Register app."</strong> You'll see a block of code starting with <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">const firebaseConfig = {…}</code> — copy all of it.</p>
+        </div>
+      </div>
+
+      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
+        <div class="sn" style="color:#f0a500;">4</div>
+        <div>
+          <h4 style="color:white;">Paste your config into this file</h4>
+          <p style="color:rgba(255,255,255,.58);">Open <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">index.html</code> in GitHub → click the pencil ✏️ → search for <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">PASTE_YOUR_API_KEY</code> → replace the entire <code style="background:rgba(240,165,0,.2);color:#f0a500;padding:.1em .4em;border-radius:4px;">firebaseConfig = {…}</code> block with the one you copied → Commit changes.</p>
+        </div>
+      </div>
+
+      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
+        <div class="sn" style="color:#f0a500;">5</div>
+        <div>
+          <h4 style="color:white;">Enable Firestore Database</h4>
+          <p style="color:rgba(255,255,255,.58);">In Firebase Console → left sidebar → <strong>"Firestore Database"</strong> → click <strong>"Create database"</strong> → choose <strong>"Start in test mode"</strong> → click <strong>Next</strong> → choose any location → click <strong>Enable.</strong></p>
+        </div>
+      </div>
+
+      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
+        <div class="sn" style="color:#f0a500;">6</div>
+        <div>
+          <h4 style="color:white;">Enable Storage (for photos)</h4>
+          <p style="color:rgba(255,255,255,.58);">In Firebase Console → left sidebar → <strong>"Storage"</strong> → click <strong>"Get started"</strong> → <strong>"Start in test mode"</strong> → click through → <strong>Done.</strong></p>
+        </div>
+      </div>
+
+      <div class="step" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);">
+        <div class="sn" style="color:#f0a500;">🎉</div>
+        <div>
+          <h4 style="color:white;">Done — the noticeboard is now live!</h4>
+          <p style="color:rgba(255,255,255,.58);">Reload the site and post something. It will instantly appear on every family member's screen anywhere in the world — Amsterdam, Sydney, Urbana-Champaign, Ann Arbor. Photos are stored in the cloud and load for everyone.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:2rem;padding:1.25rem;background:rgba(240,165,0,.12);border-radius:1rem;border:1px solid rgba(240,165,0,.25);">
+      <p style="font-size:.85rem;color:rgba(255,255,255,.7);line-height:1.75;">
+        <strong style="color:#f0a500;">💡 Free forever?</strong> Yes — Firebase's free tier allows up to 1GB of storage and 50,000 reads per day, which is more than enough for a family noticeboard. No credit card needed.
+      </p>
+    </div>
+
+    <div style="margin-top:1rem;">
+      <a class="btn" href="https://firebase.google.com" target="_blank"
+        style="background:#f0a500;color:#1a1a2e;border-color:#f0a500;">
+        Go to Firebase →
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- ══════════════════════ GITHUB GUIDE ══════════════════════ -->
 <section id="setup">
   <div class="wrap">
@@ -1616,30 +1841,8 @@
       alert('Please add a photo or write a message!'); return;
     }
 
-    // Build the top image/emoji area
-    let topHTML = '';
-    if (cat === 'photo' && window._postPhotoData) {
-      topHTML = `<img src="${window._postPhotoData}" style="width:100%;max-height:280px;object-fit:cover;display:block;" />`;
-    } else {
-      topHTML = `<div class="post-emo" style="height:100px;">${emo[cat]}</div>`;
-    }
-
-    const card = document.createElement('div');
-    card.className = 'post'; card.dataset.cat = cat;
-    card.innerHTML = `
-      ${topHTML}
-      <div class="post-body">
-        <p class="post-tag" style="color:${clr[cat]}">${lbl[cat]}</p>
-        <p class="post-title">${title}</p>
-        ${text ? `<p class="post-text">${text}</p>` : ''}
-      </div>
-      <div class="post-foot">
-        <span class="post-from">${from}</span><span>Just now</span>
-      </div>`;
-
-    document.getElementById('wall').prepend(card);
-
-    // Reset form
+    // Reset form right away so it feels fast
+    const photoData = window._postPhotoData;
     document.getElementById('pFrom').value  = '';
     document.getElementById('pTitle').value = '';
     document.getElementById('pText').value  = '';
@@ -1647,23 +1850,177 @@
     document.getElementById('pPhotoPreview').style.display = 'none';
     document.getElementById('puzInner').style.display = 'flex';
     window._postPhotoData = null;
-
     closeSheet();
-    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-    // Send email notification to the family group
-    if (notify) {
-      const subject = encodeURIComponent(`📬 New ${lbl[cat]} on the Family Hub — "${title}" by ${from}`);
-      const body    = encodeURIComponent(
-        `Hi everyone,\n\n${from} just posted something new on the Family Hub!\n\n` +
-        `Category: ${lbl[cat]}\nTitle: ${title}\n` +
-        (text ? `Message: ${text}\n` : '') +
-        `\nLog in to see it: https://ourfamilyhub.github.io\n\n` +
-        `— The Family Hub 🏠`
-      );
-      window.open(`mailto:deguzman-goose@googlegroups.com?subject=${subject}&body=${body}`, '_blank');
+    if (window._savePost) {
+      // ── Firebase connected: save to database (appears on everyone's screen) ──
+      // Remove sample posts on first real post
+      document.querySelectorAll('.sample-post').forEach(p => p.remove());
+      window._savePost(from, cat, title, text, photoData, notify);
+    } else {
+      // ── Firebase not set up yet: local only ──
+      const clr = { photo:'#c99338', idea:'#b85535', recipe:'#6a8f6e', news:'#4e3020' };
+      const lbl = { photo:'📸 Photo', idea:'💡 Idea', recipe:'🍳 Recipe', news:'📰 News' };
+      const emo = { photo:'🖼️', idea:'💡', recipe:'🍳', news:'📰' };
+
+      let topHTML = photoData
+        ? `<img src="${photoData}" style="width:100%;max-height:280px;object-fit:cover;display:block;" />`
+        : `<div class="post-emo" style="height:100px;">${emo[cat]}</div>`;
+
+      const card = document.createElement('div');
+      card.className = 'post'; card.dataset.cat = cat;
+      card.innerHTML = `
+        ${topHTML}
+        <div class="post-body">
+          <p class="post-tag" style="color:${clr[cat]}">${lbl[cat]}</p>
+          <p class="post-title">${title}</p>
+          ${text ? `<p class="post-text">${text}</p>` : ''}
+        </div>
+        <div class="post-foot">
+          <span class="post-from">${from}</span><span>Just now</span>
+        </div>`;
+      document.getElementById('wall').prepend(card);
+
+      if (notify) {
+        const subject = encodeURIComponent(`📬 New ${lbl[cat]} on the Family Hub — "${title}" by ${from}`);
+        const body    = encodeURIComponent(
+          `Hi everyone,\n\n${from} just posted something new on the Family Hub!\n\nCategory: ${lbl[cat]}\nTitle: ${title}\n` +
+          (text ? `Message: ${text}\n` : '') +
+          `\nSee it here: https://ourfamilyhub.github.io\n\n— The Family Hub 🏠`
+        );
+        window.open(`mailto:deguzman-goose@googlegroups.com?subject=${subject}&body=${body}`, '_blank');
+      }
+    }
+
+    document.getElementById('wall').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+
+<!-- ══════════════════════ FIREBASE ══════════════════════ -->
+<script type="module">
+  import { initializeApp }                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc,
+           onSnapshot, orderBy, query, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref, uploadString,
+           getDownloadURL }                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAFRoLsoM9BaApgQOWOzATx5ysPSA_Qr8Y",
+    authDomain:        "family-hub-48ac4.firebaseapp.com",
+    projectId:         "family-hub-48ac4",
+    storageBucket:     "family-hub-48ac4.firebasestorage.app",
+    messagingSenderId: "480712562854",
+    appId:             "1:480712562854:web:442c84427300eecc50bc67",
+    measurementId:     "G-189TLKGL9F"
+  };
+
+  const app     = initializeApp(firebaseConfig);
+  const db      = getFirestore(app);
+  const storage = getStorage(app);
+
+  const clr = { photo:'#c99338', idea:'#b85535', recipe:'#6a8f6e', news:'#4e3020' };
+  const lbl = { photo:'📸 Photo', idea:'💡 Idea', recipe:'🍳 Recipe', news:'📰 News' };
+  const emo = { photo:'🖼️',       idea:'💡',       recipe:'🍳',       news:'📰'      };
+
+  /* ── Render a single post card from Firestore data ── */
+  function renderPost(id, data, prepend = false) {
+    if (document.getElementById('post-' + id)) return; // already rendered
+
+    let topHTML = data.photoURL
+      ? `<img src="${data.photoURL}" style="width:100%;max-height:280px;object-fit:cover;display:block;" />`
+      : `<div class="post-emo" style="height:100px;">${emo[data.cat] || '📌'}</div>`;
+
+    const timeAgo = data.createdAt
+      ? new Date(data.createdAt.seconds * 1000).toLocaleString('en-GB', {
+          day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'
+        })
+      : 'Just now';
+
+    const card = document.createElement('div');
+    card.className = 'post';
+    card.id = 'post-' + id;
+    card.dataset.cat = data.cat;
+    card.innerHTML = `
+      ${topHTML}
+      <div class="post-body">
+        <p class="post-tag" style="color:${clr[data.cat]}">${lbl[data.cat]}</p>
+        <p class="post-title">${data.title}</p>
+        ${data.text ? `<p class="post-text">${data.text}</p>` : ''}
+      </div>
+      <div class="post-foot">
+        <span class="post-from">${data.from}</span>
+        <span>${timeAgo}</span>
+      </div>`;
+
+    const wall = document.getElementById('wall');
+    if (prepend) {
+      wall.prepend(card);
+    } else {
+      wall.appendChild(card);
     }
   }
+
+  /* ── Listen for posts in real time ── */
+  const postsRef = collection(db, 'posts');
+  const postsQuery = query(postsRef, orderBy('createdAt', 'desc'));
+
+  let firstLoad = true;
+  onSnapshot(postsQuery, snapshot => {
+    if (firstLoad) {
+      // On first load: remove sample posts and render all from Firestore
+      if (snapshot.docs.length > 0) {
+        document.querySelectorAll('.sample-post').forEach(p => p.remove());
+      }
+      snapshot.docs.forEach(doc => renderPost(doc.id, doc.data(), false));
+      firstLoad = false;
+    } else {
+      // After that: only handle new additions (prepend to top)
+      snapshot.docChanges().forEach(change => {
+        if (change.type === 'added') {
+          document.querySelectorAll('.sample-post').forEach(p => p.remove());
+          renderPost(change.doc.id, change.doc.data(), true);
+        }
+      });
+    }
+  });
+
+  /* ── Save a new post to Firestore ── */
+  window._savePost = async function(from, cat, title, text, photoData, notify) {
+    try {
+      let photoURL = null;
+
+      // Upload photo to Firebase Storage if there is one
+      if (photoData) {
+        const photoRef = ref(storage, `posts/${Date.now()}.jpg`);
+        await uploadString(photoRef, photoData, 'data_url');
+        photoURL = await getDownloadURL(photoRef);
+      }
+
+      // Save post to Firestore
+      await addDoc(postsRef, {
+        from, cat, title, text, photoURL,
+        createdAt: Timestamp.now()
+      });
+
+      // Send email notification to family group
+      if (notify) {
+        const subject = encodeURIComponent(`📬 New ${lbl[cat]} on the Family Hub — "${title}" by ${from}`);
+        const body    = encodeURIComponent(
+          `Hi everyone,\n\n${from} just posted something new on the Family Hub!\n\n` +
+          `Category: ${lbl[cat]}\nTitle: ${title}\n` +
+          (text ? `Message: ${text}\n` : '') +
+          `\nSee it here: https://ourfamilyhub.github.io\n\n— The Family Hub 🏠`
+        );
+        window.open(`mailto:deguzman-goose@googlegroups.com?subject=${subject}&body=${body}`, '_blank');
+      }
+
+    } catch (err) {
+      console.error('Firebase save error:', err);
+      alert('Could not save post. Please check your internet connection and try again.');
+    }
+  };
+
+  console.log('✅ Firebase connected — Family Hub is live!');
 </script>
 
 </body>
