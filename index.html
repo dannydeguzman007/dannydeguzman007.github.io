@@ -1812,6 +1812,7 @@
         });
 
         document.getElementById('calLoading').style.display = 'none';
+        console.log('✅ Calendar API returned', allEvents.length, 'events:', allEvents.map(e => `${e.title} (${e.start.toDateString()}${e.allDay?' all-day':''})`));
         renderMonth();
 
       } catch(e) {
