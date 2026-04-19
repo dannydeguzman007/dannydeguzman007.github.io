@@ -399,6 +399,27 @@
     .bg-btn:hover { background: rgba(0,0,0,.7); }
     .bg-input { display: none; }
 
+    /* ── In-card clock overlay ── */
+    .fcard-clock {
+      position: absolute; top: .75rem; left: .75rem;
+      z-index: 3; text-align: left; pointer-events: none;
+    }
+
+    .fcard-clock-time {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 700;
+      color: white; line-height: 1;
+      text-shadow: 0 1px 6px rgba(0,0,0,.55);
+    }
+
+    .fcard-clock-date {
+      font-size: .6rem; font-weight: 600;
+      color: rgba(255,255,255,.82);
+      letter-spacing: .04em;
+      text-shadow: 0 1px 4px rgba(0,0,0,.4);
+      margin-top: .15rem;
+    }
+
     /* Tip line */
     .photo-tip {
       margin-top: .9rem;
@@ -1097,9 +1118,6 @@
 <!-- ══════════════════════ FAMILY ══════════════════════ -->
 <section id="family">
   <div class="wrap">
-    <p class="eyebrow">Who We Are</p>
-    <h2 class="sec-title">Our Family</h2>
-    <div class="rule"></div>
 
     <div class="fgrid">
 
@@ -1110,6 +1128,10 @@
           background-color: #7a6a8a;
         "></div>
         <div class="fcard-overlay"></div>
+        <div class="fcard-clock">
+          <div class="fcard-clock-time" id="clk-amsterdam">--:--</div>
+          <div class="fcard-clock-date" id="clk-amsterdam-date"></div>
+        </div>
         <button class="bg-btn" onclick="handleBgTap('card-dad','bgi-dad',this)">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-dad" onchange="changeBg('bg-dad',this)">
         <div class="fcard-body">
@@ -1123,7 +1145,7 @@
           </div>
           <div class="fcard-info">
             <p class="fn">Dad &amp; Mama</p>
-            <p class="fc">📍 Amsterdam, Netherlands 🇳🇱</p>
+            <p class="fc">📍 Amsterdam 🇳🇱</p>
           </div>
         </div>
       </div>
@@ -1135,6 +1157,10 @@
           background-color: #4a7a9a;
         "></div>
         <div class="fcard-overlay"></div>
+        <div class="fcard-clock">
+          <div class="fcard-clock-time" id="clk-sydney">--:--</div>
+          <div class="fcard-clock-date" id="clk-sydney-date"></div>
+        </div>
         <button class="bg-btn" onclick="handleBgTap('card-vincent','bgi-vincent',this)">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-vincent" onchange="changeBg('bg-vincent',this)">
         <div class="fcard-body">
@@ -1148,7 +1174,7 @@
           </div>
           <div class="fcard-info">
             <p class="fn">Vincent</p>
-            <p class="fc">📍 Sydney, Australia 🇦🇺</p>
+            <p class="fc">📍 Sydney 🇦🇺</p>
           </div>
         </div>
       </div>
@@ -1160,6 +1186,10 @@
           background-color: #3d6b42;
         "></div>
         <div class="fcard-overlay"></div>
+        <div class="fcard-clock">
+          <div class="fcard-clock-time" id="clk-chicago">--:--</div>
+          <div class="fcard-clock-date" id="clk-chicago-date"></div>
+        </div>
         <button class="bg-btn" onclick="handleBgTap('card-daniel','bgi-daniel',this)">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-daniel" onchange="changeBg('bg-daniel',this)">
         <div class="fcard-body">
@@ -1173,7 +1203,7 @@
           </div>
           <div class="fcard-info">
             <p class="fn">Daniel</p>
-            <p class="fc">📍 Urbana-Champaign, IL 🇺🇸</p>
+            <p class="fc">📍 Urbana-Champaign 🇺🇸</p>
           </div>
         </div>
       </div>
@@ -1185,6 +1215,10 @@
           background-color: #00274c;
         "></div>
         <div class="fcard-overlay"></div>
+        <div class="fcard-clock">
+          <div class="fcard-clock-time" id="clk-detroit">--:--</div>
+          <div class="fcard-clock-date" id="clk-detroit-date"></div>
+        </div>
         <button class="bg-btn" onclick="handleBgTap('card-jacob','bgi-jacob',this)">🖼 Change BG</button>
         <input type="file" accept="image/*" class="bg-input" id="bgi-jacob" onchange="changeBg('bg-jacob',this)">
         <div class="fcard-body">
@@ -1198,7 +1232,7 @@
           </div>
           <div class="fcard-info">
             <p class="fn">Jacob</p>
-            <p class="fc">📍 Ann Arbor, MI 🇺🇸</p>
+            <p class="fc">📍 Ann Arbor 🇺🇸</p>
           </div>
         </div>
       </div>
@@ -1207,50 +1241,14 @@
 
     <p class="photo-tip">💡 Tap the circle to add a profile photo &nbsp;·&nbsp; Tap "Change BG" to swap the background</p>
 
-    <!-- Live Family Clocks -->
-    <div style="margin-top:2rem;">
-      <p class="eyebrow" style="margin-bottom:.75rem;">Right Now</p>
-      <div class="clock-grid">
-        <div class="clock-card" style="border-top: 3px solid #b85535;">
-          <div class="clock-who">❤️ Dad &amp; Mama</div>
-          <div class="clock-city">Amsterdam</div>
-          <div class="clock-time" id="clk-amsterdam">--:--</div>
-          <div class="clock-date" id="clk-amsterdam-date"></div>
-          <div class="clock-tz">Europe/Amsterdam</div>
-        </div>
-        <div class="clock-card" style="border-top: 3px solid #c99338;">
-          <div class="clock-who">Vincent</div>
-          <div class="clock-city">Sydney</div>
-          <div class="clock-time" id="clk-sydney">--:--</div>
-          <div class="clock-date" id="clk-sydney-date"></div>
-          <div class="clock-tz">Australia/Sydney</div>
-        </div>
-        <div class="clock-card" style="border-top: 3px solid #6a8f6e;">
-          <div class="clock-who">Daniel</div>
-          <div class="clock-city">Urbana-Champaign</div>
-          <div class="clock-time" id="clk-chicago">--:--</div>
-          <div class="clock-date" id="clk-chicago-date"></div>
-          <div class="clock-tz">America/Chicago</div>
-        </div>
-        <div class="clock-card" style="border-top: 3px solid #4e3020;">
-          <div class="clock-who">Jacob</div>
-          <div class="clock-city">Ann Arbor</div>
-          <div class="clock-time" id="clk-detroit">--:--</div>
-          <div class="clock-date" id="clk-detroit-date"></div>
-          <div class="clock-tz">America/Detroit</div>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
 <!-- ══════════════════════ CALENDAR ══════════════════════ -->
 <section id="calendar">
   <div class="wrap">
-    <p class="eyebrow">What's Happening</p>
     <h2 class="sec-title">Family Calendar</h2>
     <div class="rule"></div>
-    <p class="intro">Our shared family calendar — see everyone's events at a glance. Add yours so the whole family stays in the loop.</p>
 
     <div class="cal-box">
 
@@ -1637,10 +1635,10 @@
 
   /* ── Live world clocks ── */
   const clocks = [
-    { tz: 'Europe/Amsterdam',   timeId: 'clk-amsterdam', dateId: 'clk-amsterdam-date', cardId: null },
-    { tz: 'Australia/Sydney',   timeId: 'clk-sydney',    dateId: 'clk-sydney-date',    cardId: null },
-    { tz: 'America/Chicago',    timeId: 'clk-chicago',   dateId: 'clk-chicago-date',   cardId: null },
-    { tz: 'America/Detroit',    timeId: 'clk-detroit',   dateId: 'clk-detroit-date',   cardId: null },
+    { tz: 'Europe/Amsterdam', timeId: 'clk-amsterdam', dateId: 'clk-amsterdam-date', cardId: 'card-dad'     },
+    { tz: 'Australia/Sydney', timeId: 'clk-sydney',    dateId: 'clk-sydney-date',    cardId: 'card-vincent' },
+    { tz: 'America/Chicago',  timeId: 'clk-chicago',   dateId: 'clk-chicago-date',   cardId: 'card-daniel'  },
+    { tz: 'America/Detroit',  timeId: 'clk-detroit',   dateId: 'clk-detroit-date',   cardId: 'card-jacob'   },
   ];
 
   function updateClocks() {
@@ -1658,28 +1656,17 @@
         timeZone: c.tz, weekday: 'short', day: 'numeric', month: 'short'
       });
 
-      timeEl.textContent = timeStr;
-      dateEl.textContent = dateStr;
-
-      // Dim the card if it's nighttime (9pm–7am)
+      // Add day/night emoji
       const hour = parseInt(now.toLocaleString('en-GB', { timeZone: c.tz, hour: 'numeric', hour12: false }));
-      const card = timeEl.closest('.clock-card');
-      if (card) {
-        card.classList.toggle('is-night', hour >= 21 || hour < 7);
-        // Add a moon or sun emoji hint
-        const existing = card.querySelector('.time-icon');
-        if (existing) existing.remove();
-        const icon = document.createElement('span');
-        icon.className = 'time-icon';
-        icon.style.cssText = 'font-size:.75rem;margin-left:.35rem;vertical-align:middle;';
-        icon.textContent = (hour >= 21 || hour < 7) ? '🌙' : (hour < 12 ? '🌅' : '☀️');
-        timeEl.appendChild(icon);
-      }
+      const icon = hour >= 21 || hour < 7 ? ' 🌙' : hour < 12 ? ' 🌅' : ' ☀️';
+
+      timeEl.textContent = timeStr + icon;
+      if (dateEl) dateEl.textContent = dateStr;
     });
   }
 
   updateClocks();
-  setInterval(updateClocks, 1000);
+  setInterval(updateClocks, 60000); // update every minute (not every second)
   function togglePhotoUpload(cat) {
     const field = document.getElementById('photoUploadField');
     field.style.display = cat === 'photo' ? 'flex' : 'none';
@@ -2127,7 +2114,9 @@
   /* ── Build a post card element ── */
   function buildPostCard(id, data) {
     const topHTML = data.imageUrl
-      ? `<img src="${data.imageUrl}" style="width:100%;max-height:280px;object-fit:cover;display:block;" />`
+      ? `<div style="width:100%;background:#f0e8dc;text-align:center;line-height:0;">
+           <img src="${data.imageUrl}" style="max-width:100%;max-height:360px;object-fit:contain;display:inline-block;vertical-align:bottom;" />
+         </div>`
       : `<div class="post-emo" style="height:100px;">${emo[data.cat] || '📌'}</div>`;
 
     const when = data.ts
@@ -2167,27 +2156,31 @@
   function placePost(id, data) {
     if (document.getElementById('post-' + id)) return;
 
-    const d     = data.ts ? data.ts.toDate() : new Date();
-    const year  = d.getFullYear();
-    const month = d.getMonth(); // 0-11
+    const d      = data.ts ? data.ts.toDate() : new Date();
+    const year   = d.getFullYear();
+    const month  = d.getMonth();
     const mLabel = MONTHS[month] + ' ' + year;
-    const mId   = 'month-' + year + '-' + month;
+    const mId    = 'month-' + year + '-' + month;
+    const tsMs   = data.ts ? data.ts.toMillis() : Date.now();
 
     const yearContent = getYearGroup(String(year));
     const monthGroup  = getMonthGroup(yearContent, mLabel, year, month);
     const postsDiv    = monthGroup.querySelector('.month-posts');
 
     const card = buildPostCard(id, data);
+    card.dataset.ts = tsMs; // store timestamp for ordering
 
-    // Insert newest first within the month
-    const existing = postsDiv.querySelectorAll('.post');
+    // Insert newest first within month by comparing timestamps
+    const existing = [...postsDiv.querySelectorAll('.post')];
     let inserted = false;
-    if (data.ts) {
-      for (const ep of existing) {
-        // we don't store ts on the DOM — just prepend newest
+    for (const ep of existing) {
+      if (parseInt(ep.dataset.ts || 0) < tsMs) {
+        postsDiv.insertBefore(card, ep);
+        inserted = true; break;
       }
     }
-    postsDiv.prepend(card);
+    if (!inserted) postsDiv.appendChild(card);
+
     updateMonthCount(mId);
   }
 
