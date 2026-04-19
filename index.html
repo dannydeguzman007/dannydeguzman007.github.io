@@ -1434,10 +1434,10 @@
       <div style="padding:0 1.5rem 1rem;">
         <div class="steps">
           <div class="step"><div class="sn">1</div><div><h4>Create a free GitHub account</h4><p>Go to <code>github.com</code> → click "Sign up." Pick a username and confirm your email.</p></div></div>
-          <div class="step"><div class="sn">2</div><div><h4>Create a repository</h4><p>Click <strong>"New"</strong>. Name it: <code>dannydeguzman007.github.io</code>. Tick <strong>"Add a README file"</strong> → <strong>"Create repository."</strong></p></div></div>
+          <div class="step"><div class="sn">2</div><div><h4>Create a repository</h4><p>Click <strong>"New"</strong>. Name it: <code>deguzmanfamily.github.io</code>. Tick <strong>"Add a README file"</strong> → <strong>"Create repository."</strong></p></div></div>
           <div class="step"><div class="sn">3</div><div><h4>Upload this file</h4><p>Click <strong>"Add file" → "Upload files."</strong> Drag your <code>index.html</code> in and click <strong>"Commit changes."</strong></p></div></div>
           <div class="step"><div class="sn">4</div><div><h4>Switch on GitHub Pages</h4><p>Click <strong>Settings</strong> → <strong>"Pages"</strong> → choose <code>main</code> → click <strong>Save.</strong> Wait 2 minutes.</p></div></div>
-          <div class="step"><div class="sn">5</div><div><h4>Your site is live! 🎉</h4><p>Visit <code>https://dannydeguzman007.github.io</code> — free forever. Share with the family and bookmark on every phone.</p></div></div>
+          <div class="step"><div class="sn">5</div><div><h4>Your site is live! 🎉</h4><p>Visit <code>https://deguzmanfamily.github.io</code> — free forever. Share with the family and bookmark on every phone.</p></div></div>
           <div class="step"><div class="sn">6</div><div><h4>To update later</h4><p>Go to your repository → click <code>index.html</code> → click the pencil ✏️ → edit → <strong>"Commit changes."</strong> Updates in under a minute.</p></div></div>
         </div>
       </div>
@@ -2270,7 +2270,7 @@
       await addDoc(collection(db, 'posts'), { from, cat, title, text, imageUrl, ts: serverTimestamp() });
       if (notify) {
         const sub  = encodeURIComponent(`📬 New ${lbl[cat]} on the Family Hub — "${title}" by ${from}`);
-        const body = encodeURIComponent(`Hi everyone,\n\n${from} just posted on the Family Hub!\n\nCategory: ${lbl[cat]}\nTitle: ${title}\n${text ? 'Message: '+text+'\n' : ''}\nSee it: https://dannydeguzman007.github.io\n\n— The Family Hub 🏠`);
+        const body = encodeURIComponent(`Hi everyone,\n\n${from} just posted on the Family Hub!\n\nCategory: ${lbl[cat]}\nTitle: ${title}\n${text ? 'Message: '+text+'\n' : ''}\nSee it: https://deguzmanfamily.github.io\n\n— The Family Hub 🏠`);
         window.open(`mailto:deguzman-goose@googlegroups.com?subject=${sub}&body=${body}`, '_blank');
       }
     } catch(e) {
