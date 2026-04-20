@@ -2112,6 +2112,21 @@
   }
 
   /* ── Build a post card element ── */
+  /* ── Convert URLs in text to clickable links ── */
+  function linkify(text) {
+    if (!text) return '';
+    // Escape HTML first to prevent XSS
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    // Then convert URLs to links
+    return escaped.replace(
+      /(https?:\/\/[^\s<>"]+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:var(--rust);text-decoration:underline;word-break:break-all;">$1</a>'
+    );
+  }
+
   function buildPostCard(id, data) {
     const topHTML = data.imageUrl
       ? `<div style="width:100%;background:#f0e8dc;text-align:center;line-height:0;">
@@ -2139,7 +2154,7 @@
       <div class="post-body">
         <p class="post-tag" style="color:${clr[data.cat] || '#888'}">${lbl[data.cat] || '📌 Post'}</p>
         <p class="post-title">${data.title}</p>
-        ${data.text ? `<p class="post-text">${data.text}</p>` : ''}
+        ${data.text ? `<p class="post-text">${linkify(data.text)}</p>` : ''}
       </div>
       <div class="post-foot">
         <span class="post-from">${data.from}</span>
@@ -2314,10 +2329,10 @@
         const textEl  = card.querySelector('.post-text');
         if (tagEl)   { tagEl.textContent = lbl[cat]; tagEl.style.color = clr[cat]; }
         if (titleEl)   titleEl.textContent = title;
-        if (textEl)    textEl.textContent = text;
+        if (textEl)    textEl.innerHTML = linkify(text);
         else if (text) {
           const p = document.createElement('p');
-          p.className = 'post-text'; p.textContent = text;
+          p.className = 'post-text'; p.innerHTML = linkify(text);
           card.querySelector('.post-body').appendChild(p);
         }
         card.dataset.cat = cat;
